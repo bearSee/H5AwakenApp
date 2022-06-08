@@ -86,6 +86,10 @@
     <van-overlay :show="overlayVisible" @click="overlayVisible = false">
       <div>请在手机浏览器打开</div>
     </van-overlay>
+
+    <van-button type="primary" @click="clearStorage">
+      清缓存
+    </van-button>
     <pre style="font-size: .2rem;">
       <code>
         {{ '\n' + JSON.stringify($store.state, null, 2) }}
@@ -163,12 +167,12 @@ export default {
               const type = this.isAndroid ? 'android' : 'ios';
               const urlConfig = {
                   android: {
-                     openUrl: `myscheme://myhost:1024/main?id=${id}&token=${token}`,
-                     downloadUrl: 'https://hmd-down.oss-cn-hangzhou.aliyuncs.com/hificloud/android/release.apk',
+                      openUrl: `myscheme://myhost:1024/main?key1=${id}&key2=${token}`,
+                      downloadUrl: 'https://hmd-down.oss-cn-hangzhou.aliyuncs.com/hificloud/android/release.apk',
                   },
                   ios: {
-                     openUrl: `https://share.hificloud.net/share?id=${id}&token=${token}.dde.1wx`,
-                     downloadUrl: 'https://apps.apple.com/cn/app/hificloud/id1543197598',
+                      openUrl: `https://share.hificloud.net/share?id=${id}&token=${token}.dde.1wx`,
+                      downloadUrl: 'https://apps.apple.com/cn/app/hificloud/id1543197598',
                   },
               };
               const { openUrl, downloadUrl } = urlConfig[type];
@@ -181,20 +185,16 @@ export default {
           }
           this.overlayVisible = true;
       },
+      async clearStorage() {
+          await this.$store.commit('clearUserInfo');
+          this.$store.commit('setURLStatic', {
+              id: this.$store.state.queryParams.id,
+          });
+          window.location.reload();
+      },
   },
   mounted() {
       this.$store.dispatch('getQueryParams');
-      const historyInfo = window.localStorage.getItem('userInfo');
-      if (historyInfo) {
-          try {
-              this.$store.dispatch('loginSuccess', JSON.parse(historyInfo));
-          } catch (error) {
-              this.$store.dispatch('wxAuthorization');
-              console.error('error:', error);
-          }
-          return;
-      }
-      this.$store.dispatch('wxAuthorization');
   },
 }
 </script>

@@ -17,14 +17,12 @@ const fileHost = 'http://agent.hificloud.net:8084/v1/';
 export default createStore({
     state: {
         queryParams: {},
-        // userInfo: JSON.parse(window.localStorage.getItem('userInfo') || '{}'),
         userInfo: {},
         images: [],
     },
     getters: {},
     mutations: {
         setQueryParams(state, payload) {
-            document.title = payload.sharer ? `来自${payload.sharer || 'xxx'}的分享` : '分享内容';
             state.queryParams = payload || {};
         },
         setUserInfo(state, payload) {
@@ -32,19 +30,26 @@ export default createStore({
             window.localStorage.setItem('token', (payload || {}).token || '');
             window.localStorage.setItem('userInfo', JSON.stringify(payload || {}));
         },
+        setShareInfo(state, payload) {
+            document.title = payload.sharer ? `来自${payload.nickname || 'xxx'}的分享` : '分享内容';
+            state.shareInfo = payload || {};
+        },
         setImages(state, payload) {
             state.images = payload || [];
         },
+        setURLStatic(state, payload = {}) {
+            const host = window.location.href.split('?')[0];
+            history.replaceState(null, null, `${host}?${qs.stringify(payload)}`);
+        },
         clearUserInfo(state) {
-            state.queryParams = {};
+            state.queryParams = { id: state.queryParams.id || '' };
             state.userInfo = {};
-            state.images = [];
             window.localStorage.clear();
         },
     },
     actions: {
         // 截取url所带参数
-        // http://share.hificloud.net/share?id=6295d4fe978a0c6fd07dba06
+        // http://share.hificloud.net/share?id=629f0ab110043e0797a8a0f2
         getQueryParams({ commit, dispatch }) {
             let [host, paramsString] = window.location.href.split('?');
             if (host && host[host.length - 1] === '/') host = host.slice(0, host.length - 1);
@@ -55,17 +60,55 @@ export default createStore({
                 id: params.id || params.state || '',
             };
             commit('setQueryParams', queryParams);
+            dispatch('getShareInfo');
             dispatch('getImageList');
+            // 从url参数判断是否已经登录
+            const { token, nickname } = queryParams;
+            if (token) {
+                dispatch('loginSuccess', { nickname, token });
+                return;
+            }
+            // 从本地存储判断是否已经登录
+            const historyInfo = window.localStorage.getItem('userInfo');
+            if (historyInfo) {
+                try {
+                    dispatch('loginSuccess', JSON.parse(historyInfo));
+                } catch (error) {
+                    dispatch('wxAuthorization');
+                    console.error('error:', error);
+                }
+                return;
+            }
+            dispatch('wxAuthorization');
+        },
+        getShareInfo({ state, commit }) {
+            const { id } = state.queryParams;
+            if (!id) return;
+            axios.get(`http://agent.hificloud.net:8084/v1/share/album/ghost/${id}`).then((res) => {
+                const data = (((res && res.data || {}).data || {}).context || {}).owner || {};
+                commit('setShareInfo', data);
+            });
+        },
+        getImageList({ state, commit }) {
+            const { id } = state.queryParams;
+            if (!id) return;
+            axios.get(`http://agent.hificloud.net:8084/v1/share/media/list?id=${id}`).then((res) => {
+                const data = (((res && res.data || {}).data || {}).content || []).map(d => ({
+                    ...d,
+                    url: `${fileHost}file/img?id=${id}&md5=${d.md5}&option=2`,
+                    thumbnailUrl: `${fileHost}file/img?id=${id}&md5=${d.md5}&option=1`,
+                    originUrl: `${fileHost}file/img?id=${id}&md5=${d.md5}&option=0`,
+                }));
+                commit('setImages', data);
+            });
         },
         /**
          * 调起用户授权界面获取code
          * wx1fcdb848faaefcf9
          * AppSecret：496cf4fdf48ea6b5854f6c1bc13729b6
-         * https://open.weixin.qq.com/connect/oauth2/authorize?appid=wx1fcdb848faaefcf9&redirect_uri=http%3A%2F%2Ftest.wechat.hificloud.net%2Fv1%2Fwxinfo&response_type=code&scope=snsapi_userinfo&state=STATE
          */
         wxAuthorization({ state, dispatch }) {
-            const isWeixin = /MicroMessenger/i.test(window.navigator.userAgent.toLowerCase());
-            if (!isWeixin) return;
+            if (!/MicroMessenger/i.test(window.navigator.userAgent.toLowerCase())) return;
             const { host, code, id } = state.queryParams;
             if (code) {
                 dispatch('wxLogin');
@@ -95,7 +138,7 @@ export default createStore({
         accountLogin({ state, dispatch }, payload) {
             return new Promise((resolve) => {
                 axios.post('/app/user/social/wechat/quick/login', {
-                    code: state.queryParams.code,
+                    code: state.queryParams.code || '',
                     ...payload,
                 }).then((res) => {
                     const data = (res && res.data || {}).data;
@@ -104,22 +147,12 @@ export default createStore({
                 });
             });
         },
-        loginSuccess({ commit }, payload) {
-            commit('setUserInfo', payload);
-        },
-        getImageList({ state, commit }) {
+        loginSuccess({ state, commit }, payload) {
             const { id } = state.queryParams;
-            if (!id) return;
-            axios.get(`http://agent.hificloud.net:8084/v1/share/media/list?id=${id}`).then((res) => {
-            // axios.get(`http://localhost:8088/v1/share/media/list?id=${id}`).then((res) => {
-                const data = (((res && res.data || {}).data || {}).content || []).map(d => ({
-                    ...d,
-                    url: `${fileHost}file/img?id=${id}&md5=${d.md5}&option=2`,
-                    thumbnailUrl: `${fileHost}file/img?id=${id}&md5=${d.md5}&option=1`,
-                    originUrl: `${fileHost}file/img?id=${id}&md5=${d.md5}&option=0`,
-                }));
-                commit('setImages', data);
-            });
+            const { nickname, token } = payload;
+            commit('setURLStatic', { id, nickname, token });
+            commit('setUserInfo', payload);
+            axios.get('/checklogin');
         },
     },
 });
