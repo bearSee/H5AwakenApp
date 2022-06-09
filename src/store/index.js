@@ -11,8 +11,8 @@ import { createStore } from 'vuex';
 import axios from '@/plugins/axios';
 import qs from 'qs';
 
-// const fileHost = axios.defaults.baseURL;
-const fileHost = 'http://agent.hificloud.net:8084/v1/';
+const fileHost = axios.defaults.baseURL;
+// const fileHost = 'http://agent.hificloud.net:8084/v1/';
 
 export default createStore({
     state: {
@@ -84,7 +84,7 @@ export default createStore({
         getShareInfo({ state, commit }) {
             const { id } = state.queryParams;
             if (!id) return;
-            axios.get(`http://agent.hificloud.net:8084/v1/share/album/ghost/${id}`).then((res) => {
+            axios.get(`/share/album/ghost/${id}`).then((res) => {
                 const data = (((res && res.data || {}).data || {}).context || {}).owner || {};
                 commit('setShareInfo', data);
             });
@@ -92,7 +92,7 @@ export default createStore({
         getImageList({ state, commit }) {
             const { id } = state.queryParams;
             if (!id) return;
-            axios.get(`http://agent.hificloud.net:8084/v1/share/media/list?id=${id}`).then((res) => {
+            axios.get(`/share/media/list?id=${id}`).then((res) => {
                 const data = (((res && res.data || {}).data || {}).content || []).map(d => ({
                     ...d,
                     url: `${fileHost}file/img?id=${id}&md5=${d.md5}&option=2`,
