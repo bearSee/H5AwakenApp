@@ -2,8 +2,8 @@
  * @Author: 熊望
  * @Date: 2022-06-02 23:44:20
  * @LastEditors: 熊望
- * @LastEditTime: 2022-06-05 01:23:10
- * @FilePath: /nginx/Users/bear/Desktop/new-project/src/store/index.js
+ * @LastEditTime: 2022-06-11 00:04:51
+ * @FilePath: /nginx/Users/bear/Desktop/H5AwakenApp/src/store/index.js
  * @Description: 
  */
 
@@ -59,6 +59,7 @@ export default createStore({
         // http://share.hificloud.net/share?id=629f0ab110043e0797a8a0f2
         getQueryParams({ commit }) {
             let [, paramsString] = window.location.href.split('?');
+            paramsString = paramsString.split('#/')[0];
             const params = paramsString && qs.parse(paramsString) || {};
             const queryParams = {
                 ...params,
@@ -84,13 +85,10 @@ export default createStore({
          * wx1fcdb848faaefcf9
          * AppSecret：496cf4fdf48ea6b5854f6c1bc13729b6
          */
-        wxAuthorization({ state, dispatch }) {
+        wxAuthorization({ state }) {
             if (!/MicroMessenger/i.test(window.navigator.userAgent.toLowerCase())) return;
             const { code, id } = state.queryParams;
-            if (code) {
-                dispatch('wxLogin');
-                return;
-            }
+            if (code) return;
             const url = 'https://open.weixin.qq.com/connect/oauth2/authorize';
             const appid = 'wx1fcdb848faaefcf9';
             const redirect_uri = window.location.href.split('?')[0];

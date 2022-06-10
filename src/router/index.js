@@ -1,3 +1,11 @@
+/*
+ * @Author: 熊望
+ * @Date: 2022-06-10 23:43:18
+ * @LastEditors: 熊望
+ * @LastEditTime: 2022-06-11 00:04:36
+ * @FilePath: /nginx/Users/bear/Desktop/H5AwakenApp/src/router/index.js
+ * @Description: 
+ */
 import { createRouter, createWebHashHistory } from 'vue-router';
 import store from '@/store';
 
@@ -5,8 +13,8 @@ const { state, dispatch } = store;
 
 const routes = [
     {
-      path: '/',
-      redirect: '/home',
+        path: '/',
+        redirect: '/home',
     },
     {
         path: '/login',
@@ -28,7 +36,7 @@ const router = createRouter({
 router.beforeEach(async (to, from, next) => {
     if (!state.queryParams) await dispatch('getQueryParams');
 
-    if (!state.isLogined && state.queryParams.code) {
+    if (to.path !== '/login' && !state.isLogined && state.queryParams.code) {
         next('/login');
         return;
     }

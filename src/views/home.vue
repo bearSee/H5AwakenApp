@@ -2,8 +2,8 @@
  * @Author: 熊望
  * @Date: 2022-06-02 23:36:44
  * @LastEditors: 熊望
- * @LastEditTime: 2022-06-05 01:30:32
- * @FilePath: /nginx/Users/bear/Desktop/new-project/src/App.vue
+ * @LastEditTime: 2022-06-10 23:58:31
+ * @FilePath: /nginx/Users/bear/Desktop/H5AwakenApp/src/views/home.vue
  * @Description: 
 -->
 <template>
@@ -61,9 +61,16 @@
         一键转存云存宝
       </van-button>
       
-      <van-button block @click="clearStorage" size="mini">
+      <van-button block @click="clearStorage">
         清除缓存，退出登录(测试)
       </van-button>
+
+      <pre style="font-size: .1rem;">
+        <code>
+          {{ '\n' + JSON.stringify($store.state, null, 2) }}
+        </code>
+      </pre>
+
     </div>
     <van-overlay class="overlay-dialog" :show="overlayVisible" @click="overlayVisible = false">
       <div>请在手机浏览器打开</div>
