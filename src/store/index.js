@@ -46,6 +46,7 @@ export default createStore({
         clearAuthorization(state) {
             const queryParams = { id: state.queryParams.id || '' };
             state.queryParams = queryParams;
+            state.userInfo = {};
             state.userHeadImg = '';
             state.isLogined = false;
             window.localStorage.clear();

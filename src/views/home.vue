@@ -60,6 +60,10 @@
         @click="handlerOpenApp">
         一键转存云存宝
       </van-button>
+      
+      <van-button block @click="clearStorage" size="mini">
+        清除缓存，退出登录(测试)
+      </van-button>
     </div>
     <van-overlay class="overlay-dialog" :show="overlayVisible" @click="overlayVisible = false">
       <div>请在手机浏览器打开</div>
@@ -137,6 +141,9 @@ export default {
               return;
           }
           this.overlayVisible = true;
+      },
+      clearStorage() {
+        this.$store.commit('clearAuthorization');
       },
   },
   mounted() {
