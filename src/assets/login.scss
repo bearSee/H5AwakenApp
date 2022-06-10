@@ -1,0 +1,85 @@
+.share-page-login {
+  background: #f2f2f6;
+  font-family: Adobe Heiti Std;
+  height: 100vh;
+  overflow: hidden;
+  font-size: .13rem;
+  font-weight: normal;
+  color: #8F92A1;
+  padding: .3rem .28rem;
+  .login-head {
+    font-size: .21rem;
+    font-weight: 400;
+    color: #000000;
+    text-align: center;
+    img {
+      width: 2.1rem;
+      margin-bottom: .3rem;
+    }
+    .des {
+      font-size: .13rem;
+      color: #8F92A1;
+      margin-top: .14rem;
+    }
+  }
+  .van-form {
+    margin-top: .28rem;
+    .van-cell-group {
+      background: #f2f2f6;
+      margin: 0;
+      .van-cell {
+        padding: .14rem 0;
+        margin-top: .08rem;
+        background: #f2f2f6;
+        .verification-code-btn {
+          background: transparent;
+          color: #009CEA;
+          border: 0;
+          margin-left: .15rem;
+        }
+        &.is-border {
+          border-bottom: .01rem solid #d9d9d9;
+        }
+        &::after {
+          display: none;
+        }
+      }
+      .agreed-checkbox {
+        .van-checkbox__icon {
+          font-size: .15rem;
+        }
+        .van-checkbox__label {
+          font-size: .13rem;
+          color: #8F92A1;
+          .txt {
+            color: #009CEA;
+          }
+        }
+      }
+    }
+    .submit-box {
+      margin-top: .08rem;
+      .van-button {
+        height: .46rem;
+        background: #41507B;
+        opacity: 0.7;
+        border-radius: .1rem;
+        font-size: .15rem;
+        font-family: SimHei;
+        font-weight: 400;
+        color: #FFFFFF;
+      }
+    }
+  }
+  .wx-login-box {
+    position: fixed;
+    bottom: .35rem;
+    left: 50%;
+    transform: translateX(-50%);
+    img {
+      width: .5rem;
+      height: .5rem;
+      margin-top: .12rem;
+    }
+  }
+}

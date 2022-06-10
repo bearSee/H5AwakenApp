@@ -11,13 +11,13 @@ import { createStore } from 'vuex';
 import axios from '@/plugins/axios';
 import qs from 'qs';
 
-const fileHost = axios.defaults.baseURL;
-// const fileHost = 'http://agent.hificloud.net:8084/v1/';
 
 export default createStore({
     state: {
-        queryParams: {},
+        queryParams: null,
+        isLogined: false,
         userInfo: {},
+        userHeadImg: '',
         images: [],
     },
     getters: {},
@@ -25,14 +25,16 @@ export default createStore({
         setQueryParams(state, payload) {
             state.queryParams = payload || {};
         },
+        setLogined(state, payload) {
+            state.isLogined = payload;
+        },
         setUserInfo(state, payload) {
             state.userInfo = payload || {};
             window.localStorage.setItem('token', (payload || {}).token || '');
             window.localStorage.setItem('userInfo', JSON.stringify(payload || {}));
         },
-        setShareInfo(state, payload) {
-            document.title = payload.sharer ? `来自${payload.nickname || 'xxx'}的分享` : '分享内容';
-            state.shareInfo = payload || {};
+        setUserHeadImg(state, payload) {
+            state.userHeadImg = payload || '';
         },
         setImages(state, payload) {
             state.images = payload || [];
@@ -41,63 +43,37 @@ export default createStore({
             const host = window.location.href.split('?')[0];
             history.replaceState(null, null, `${host}?${qs.stringify(payload)}`);
         },
-        clearUserInfo(state) {
-            state.queryParams = { id: state.queryParams.id || '' };
-            state.userInfo = {};
+        clearAuthorization(state) {
+            const queryParams = { id: state.queryParams.id || '' };
+            state.queryParams = queryParams;
+            state.userHeadImg = '';
+            state.isLogined = false;
             window.localStorage.clear();
+            const host = window.location.href.split('?')[0];
+            history.replaceState(null, null, `${host}?${qs.stringify(queryParams)}`);
         },
     },
     actions: {
         // 截取url所带参数
         // http://share.hificloud.net/share?id=629f0ab110043e0797a8a0f2
-        getQueryParams({ commit, dispatch }) {
-            let [host, paramsString] = window.location.href.split('?');
-            if (host && host[host.length - 1] === '/') host = host.slice(0, host.length - 1);
+        getQueryParams({ commit }) {
+            let [, paramsString] = window.location.href.split('?');
             const params = paramsString && qs.parse(paramsString) || {};
             const queryParams = {
-                host,
                 ...params,
                 id: params.id || params.state || '',
             };
             commit('setQueryParams', queryParams);
-            dispatch('getShareInfo');
-            dispatch('getImageList');
-            // 从url参数判断是否已经登录
-            const { token, nickname } = queryParams;
-            if (token) {
-                dispatch('loginSuccess', { nickname, token });
-                return;
-            }
-            // 从本地存储判断是否已经登录
-            const historyInfo = window.localStorage.getItem('userInfo');
-            if (historyInfo) {
-                try {
-                    dispatch('loginSuccess', JSON.parse(historyInfo));
-                } catch (error) {
-                    dispatch('wxAuthorization');
-                    console.error('error:', error);
-                }
-                return;
-            }
-            dispatch('wxAuthorization');
-        },
-        getShareInfo({ state, commit }) {
-            const { id } = state.queryParams;
-            if (!id) return;
-            axios.get(`/share/album/ghost/${id}`).then((res) => {
-                const data = (((res && res.data || {}).data || {}).context || {}).owner || {};
-                commit('setShareInfo', data);
-            });
         },
         getImageList({ state, commit }) {
             const { id } = state.queryParams;
             if (!id) return;
-            axios.get(`/share/media/list?id=${id}`).then((res) => {
+            axios.get(`${window._businessRoot}v1/share/media/list?id=${id}`).then((res) => {
                 const data = (((res && res.data || {}).data || {}).content || []).map(d => ({
                     ...d,
-                    url: `${fileHost}file/img?id=${id}&md5=${d.md5}&option=2`,
-                    thumbnailUrl: `${fileHost}file/img?id=${id}&md5=${d.md5}&option=1`,
-                    originUrl: `${fileHost}file/img?id=${id}&md5=${d.md5}&option=0`,
+                    url: `${window._businessRoot}v1/file/img?id=${id}&md5=${d.md5}&option=2`,
+                    thumbnailUrl: `${window._businessRoot}v1/file/img?id=${id}&md5=${d.md5}&option=1`,
+                    originUrl: `${window._businessRoot}v1/file/img?id=${id}&md5=${d.md5}&option=0`,
                 }));
                 commit('setImages', data);
             });
@@ -109,14 +85,14 @@ export default createStore({
          */
         wxAuthorization({ state, dispatch }) {
             if (!/MicroMessenger/i.test(window.navigator.userAgent.toLowerCase())) return;
-            const { host, code, id } = state.queryParams;
+            const { code, id } = state.queryParams;
             if (code) {
                 dispatch('wxLogin');
                 return;
             }
             const url = 'https://open.weixin.qq.com/connect/oauth2/authorize';
             const appid = 'wx1fcdb848faaefcf9';
-            const redirect_uri = `${host}`;
+            const redirect_uri = window.location.href.split('?')[0];
             const response_type = 'code';
             const scope = 'snsapi_userinfo';
             const newUrl = `${url}?${qs.stringify({
@@ -128,31 +104,51 @@ export default createStore({
             })}#wechat_redirect`;
             window.location.href = newUrl;
         },
-        wxLogin({ state, dispatch }) {
-            const { code } = state.queryParams;
-            axios.post('/app/user/social/wechat/login', { code }).then((res) => {
-                const data = (res && res.data || {}).data;
-                dispatch('loginSuccess', data);
-            });
-        },
-        accountLogin({ state, dispatch }, payload) {
+        handlerLogin({ state, dispatch }, payload) {
+            const code = state.queryParams.code || '';
+            const url = code ? '/app/user/social/wechat/login' : '/app/user/social/wechat/quick/login';
             return new Promise((resolve) => {
-                axios.post('/app/user/social/wechat/quick/login', {
-                    code: state.queryParams.code || '',
+                axios.post(url, {
+                    code,
                     ...payload,
                 }).then((res) => {
-                    const data = (res && res.data || {}).data;
-                    dispatch('loginSuccess', data);
+                    dispatch('loginSuccess', (res && res.data || {}).data);
                     resolve();
                 });
             });
         },
         loginSuccess({ state, commit }, payload) {
-            const { id } = state.queryParams;
-            const { nickname, token } = payload;
-            commit('setURLStatic', { id, nickname, token });
+            commit('setURLStatic', {
+                id: (state.queryParams || '').id || '',
+                nickname: payload.nickname || '',
+                token: payload.token || '',
+            });
             commit('setUserInfo', payload);
-            axios.get('/checklogin');
+            axios.get('/head/img').then((r) => {
+                commit('setUserHeadImg', (r && r.data && r.data || {}).data);
+            });
+        },
+        checkLoginStatus({ state, commit, dispatch }, payload) {
+            const { token, nickname } = payload || {};
+            return new Promise((resolve) => {
+                window.localStorage.setItem('token', token);
+                axios.get('/token/verify').then((res) => {
+                    const isLogined = !!(res && res.data && res.data || {}).data;
+                    if (isLogined) {
+                        dispatch('loginSuccess', {
+                            nickname: (state.queryParams || '').nickname || nickname || '',
+                            token,
+                        });
+                        commit('setLogined', true);
+                    } else {
+                        commit('clearAuthorization');
+                    }
+                    resolve(isLogined);
+                }).catch(() => {
+                    resolve(false);
+                    commit('clearAuthorization');
+                });
+            });
         },
     },
 });

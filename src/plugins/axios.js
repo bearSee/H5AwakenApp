@@ -11,10 +11,11 @@ import store from '../store';
 import { Toast } from 'vant';
 
 // const root = `${window.location.protocol}//${window.location.host}`;
-const root = 'https://api.hificloud.net/';
+const baseRoot = 'https://api.hificloud.net/';
+const businessRoot = 'http://agent.hificloud.net:8084/';
 
 const axiosConfig = {
-    baseURL: `${root}v1/`,
+    baseURL: `${baseRoot}v1/`,
     timeout: 30 * 1000, // Timeout
     // withCredentials: true, // Check cross-site Access-Control
 };
@@ -25,7 +26,7 @@ Axios.interceptors.request.use(
         const token = window.localStorage.getItem('token') || '';
         config.headers = {
             ...config.headers,
-            token,
+            Authorization:`Bearer ${token}`,
         };
         if (config.loading) {
             Toast.clear();
@@ -50,8 +51,7 @@ Axios.interceptors.response.use(
         Toast.clear();
         if (String((res.data || {}).status) === '200') return res;
         if (String((res.data || {}).status) === '401') {
-            store.commit('clearUserInfo');
-            store.dispatch('wxAuthorization');
+            store.commit('clearAuthorization');
             return res;
         }
         Toast({
@@ -67,6 +67,9 @@ Axios.interceptors.response.use(
         return Promise.reject(error);
     },
 );
+
+window._baseRoot = baseRoot;
+window._businessRoot = businessRoot;
 
 export default Axios
 

@@ -1,0 +1,157 @@
+.share-page-home {
+  background: #fff;
+  font-family: Adobe Heiti Std;
+  height: 100vh;
+  overflow: hidden;
+  font-weight: normal;
+  .home-head {
+    padding: .07rem .18rem;
+    display: flex;
+    justify-content: space-between;
+    height: .56rem;
+    background: #F2F2F6;
+    .app-box {
+      display: flex;
+      img {
+        width: .42rem;
+        height: .42rem;
+        margin-right: .1rem;
+        border-radius: .09rem;
+      }
+      .des {
+        color: #8F92A1;
+        font-size: .13rem;
+        margin-top: .05rem;
+        .des-t {
+          color: #000;
+          font-size: .15rem;
+          margin-bottom: .05rem;
+        }
+      }
+    }
+    .van-button {
+      margin: auto 0;
+      width: .65rem;
+      height: .25rem;
+      background: #009CEA;
+      border-radius: .13rem;
+      text-align: center;
+    }
+  }
+  .home-body {
+    height: calc(100% - .56rem);
+    padding: .2rem 0;
+    overflow-x: hidden;
+    overflow-y: auto;
+    .user-info {
+      display: flex;
+      justify-content: space-between;
+      font-size: .15rem;
+      padding: 0 .18rem;
+      .info {
+        color: #009CEA;
+        display: flex;
+        .van-image {
+          margin: auto 0;
+        }
+        .nickname {
+          margin: auto .12rem;
+        }
+      }
+      .operate {
+        display: flex;
+        .gird {
+          margin: auto .04rem;
+          width: .16rem;
+          height: .16rem;
+        }
+        span {
+          margin: auto 0;
+        }
+      }
+    }
+    .photo-box {
+      padding: 0 .18rem;
+      font-size: .13rem;
+      margin-top: .24rem;
+      margin-bottom: .33rem;
+      .photo-t {
+        font-size: .15rem;
+        color: #1A1A1A;
+        margin-bottom: .08rem;
+      }
+      .photo-c {
+        color: #8F92A1;
+        .tip {
+          color: #FF0000;
+          margin-left: .06rem;
+        }
+      }
+    }
+    .van-grid {
+      .van-grid-item {
+        .van-grid-item__content {
+          padding: 0;
+          .van-image {
+            height: 100%;
+            width: 100%;
+          }
+        }
+      }
+    }
+    .van-empty {
+      .van-empty__image {
+        width: 2.46rem;
+        height: 1.4rem;
+      }
+      .van-empty__bottom {
+        font-size: .15rem;
+        text-align: center;
+        .tip-c {
+          font-size: .13rem;
+          color: #8F92A1;
+          margin-top: .11rem;
+        }
+      }
+    }
+    .my-swipe {
+      height: .85rem;
+      background: #f2f2f6;
+      border-radius: .1rem;
+      margin: .18rem .1rem;
+      .van-swipe-item {
+        display: flex;
+        justify-content: center;
+        img {
+          width: 2.5rem;
+          transform: scale(.8);
+        }
+      }
+    }
+    .save-app-btn {
+      width: 2.12rem;
+      height: .46rem;
+      color: #fff;
+      background: #41507B;
+      border-radius: .23rem;
+      position: fixed;
+      bottom: .22rem;
+      left: 50%;
+      transform: translateX(-50%);
+      font-size: .15rem;
+      .van-icon__image {
+        width: .25rem;
+      }
+    }
+  }
+  .overlay-dialog {
+    div {
+      position: absolute;
+      top: 40%;
+      left: 50%;
+      transform: translateX(-50%);
+      color: #fff;
+      font-size: .2rem;
+    }
+  }
+}

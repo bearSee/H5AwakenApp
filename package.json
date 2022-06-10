@@ -13,6 +13,7 @@
     "qs": "^6.10.3",
     "vant": "^3.4.9",
     "vue": "^3.2.13",
+    "vue-router": "^4.0.16",
     "vuex": "^4.0.2"
   },
   "devDependencies": {

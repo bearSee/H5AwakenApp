@@ -6,17 +6,18 @@
  * @FilePath: /nginx/Users/bear/Desktop/new-project/src/main.js
  * @Description: 
  */
+
 import { createApp } from 'vue';
 import App from './App.vue';
+import router from './router';
 import store from './store';
 import vant from 'vant';
 import Axios from './plugins/axios';
-import './assets/vant.css';
 
 const app = createApp(App);
 
 window.axios = Axios;
 app.config.globalProperties.$http = Axios;
 
-app.use(store).use(vant).mount('#app');
+app.use(store).use(router).use(vant).mount('#app');
 
