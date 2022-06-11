@@ -2,7 +2,7 @@
  * @Author: 熊望
  * @Date: 2022-06-02 23:36:44
  * @LastEditors: 熊望
- * @LastEditTime: 2022-06-10 23:58:31
+ * @LastEditTime: 2022-06-11 22:27:34
  * @FilePath: /nginx/Users/bear/Desktop/H5AwakenApp/src/views/home.vue
  * @Description: 
 -->
@@ -34,7 +34,7 @@
           <span>{{ isGird ? '宫格' : '大图' }}</span>
         </div>
       </div>
-      <div class="photo-box">
+      <div class="photo-box" v-show="images.length">
         <div class="photo-t">照片合集</div>
         <div class="photo-c">
           <span>共 {{ images.length || 0 }} 张照片</span><span class="tip">此链接将在24小时候后失效</span>
@@ -61,6 +61,9 @@
         一键转存云存宝
       </van-button>
       
+      <!-- <van-button block @click="getAddress">
+        获取地址
+      </van-button>
       <van-button block @click="clearStorage">
         清除缓存，退出登录(测试)
       </van-button>
@@ -69,7 +72,7 @@
         <code>
           {{ '\n' + JSON.stringify($store.state, null, 2) }}
         </code>
-      </pre>
+      </pre> -->
 
     </div>
     <van-overlay class="overlay-dialog" :show="overlayVisible" @click="overlayVisible = false">
@@ -148,6 +151,10 @@ export default {
               return;
           }
           this.overlayVisible = true;
+      },
+      getAddress() {
+        const msg = window.location.href;
+        alert(msg);
       },
       clearStorage() {
         this.$store.commit('clearAuthorization');

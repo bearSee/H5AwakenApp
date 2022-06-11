@@ -49,6 +49,7 @@
 .share-page-home .home-body {
   height: calc(100% - .56rem);
   padding: .2rem 0;
+  padding-bottom: .8rem;
   overflow-x: hidden;
   overflow-y: auto;
 }

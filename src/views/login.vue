@@ -2,8 +2,8 @@
  * @Author: 熊望
  * @Date: 2022-06-02 23:36:44
  * @LastEditors: 熊望
- * @LastEditTime: 2022-06-05 01:30:32
- * @FilePath: /nginx/Users/bear/Desktop/new-project/src/App.vue
+ * @LastEditTime: 2022-06-11 22:27:24
+ * @FilePath: /nginx/Users/bear/Desktop/H5AwakenApp/src/views/login.vue
  * @Description: 
 -->
 <template>
@@ -58,10 +58,15 @@
           </van-button>
         </div>
       </van-form>
-      <div class="wx-login-box" v-if="!isWechat">
+      <div class="wx-login-box" v-if="isWeixinEnv && !isWechat">
         <div>微信登录</div>
         <img src="@/assets/image/wxlogin.png" @click="wxAuthorization" alt="" srcset="">
       </div>
+      <!-- <pre style="font-size: .1rem;">
+        <code>
+          {{ '\n' + JSON.stringify($store.state, null, 2) }}
+        </code>
+      </pre> -->
   </div>
 </template>
 
@@ -78,7 +83,9 @@ export default {
     setup() {
       const { state, dispatch } = useStore();
       const router = useRouter();
+      const ua = window.navigator.userAgent.toLowerCase();
       return {
+          isWeixinEnv: /MicroMessenger/i.test(ua),
           isWechat: ref(!!state.queryParams.code),
           agreed: ref(true),
           telephone: ref(''),

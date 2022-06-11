@@ -2,7 +2,7 @@
  * @Author: 熊望
  * @Date: 2022-06-02 23:44:20
  * @LastEditors: 熊望
- * @LastEditTime: 2022-06-11 00:04:51
+ * @LastEditTime: 2022-06-11 20:20:35
  * @FilePath: /nginx/Users/bear/Desktop/H5AwakenApp/src/store/index.js
  * @Description: 
  */
@@ -58,7 +58,7 @@ export default createStore({
         // 截取url所带参数
         // http://share.hificloud.net/share?id=629f0ab110043e0797a8a0f2
         getQueryParams({ commit }) {
-            let [, paramsString] = window.location.href.split('?');
+            let [, paramsString = ''] = window.location.href.split('?');
             paramsString = paramsString.split('#/')[0];
             const params = paramsString && qs.parse(paramsString) || {};
             const queryParams = {
@@ -83,7 +83,7 @@ export default createStore({
         /**
          * 调起用户授权界面获取code
          * wx1fcdb848faaefcf9
-         * AppSecret：496cf4fdf48ea6b5854f6c1bc13729b6
+         * AppSecret: 496cf4fdf48ea6b5854f6c1bc13729b6
          */
         wxAuthorization({ state }) {
             if (!/MicroMessenger/i.test(window.navigator.userAgent.toLowerCase())) return;
@@ -91,7 +91,7 @@ export default createStore({
             if (code) return;
             const url = 'https://open.weixin.qq.com/connect/oauth2/authorize';
             const appid = 'wx1fcdb848faaefcf9';
-            const redirect_uri = window.location.href.split('?')[0];
+            const redirect_uri = (window.location.href.split('?')[0] || '').split('#/')[0];
             const response_type = 'code';
             const scope = 'snsapi_userinfo';
             const newUrl = `${url}?${qs.stringify({
@@ -105,9 +105,8 @@ export default createStore({
         },
         handlerLogin({ state, dispatch }, payload) {
             const code = state.queryParams.code || '';
-            const url = code ? '/app/user/social/wechat/login' : '/app/user/social/wechat/quick/login';
             return new Promise((resolve) => {
-                axios.post(url, {
+                axios.post('/app/user/social/wechat/quick/login', {
                     code,
                     ...payload,
                 }).then((res) => {
@@ -117,11 +116,13 @@ export default createStore({
             });
         },
         loginSuccess({ state, commit }, payload) {
-            commit('setURLStatic', {
+            const queryParams = {
                 id: (state.queryParams || '').id || '',
                 nickname: payload.nickname || '',
                 token: payload.token || '',
-            });
+            };
+            commit('setURLStatic', queryParams);
+            commit('setQueryParams', queryParams);
             commit('setUserInfo', payload);
             axios.get('/head/img').then((r) => {
                 commit('setUserHeadImg', (r && r.data && r.data || {}).data);

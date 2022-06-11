@@ -2,7 +2,7 @@
  * @Author: 熊望
  * @Date: 2022-06-10 23:43:18
  * @LastEditors: 熊望
- * @LastEditTime: 2022-06-11 00:04:36
+ * @LastEditTime: 2022-06-11 14:34:02
  * @FilePath: /nginx/Users/bear/Desktop/H5AwakenApp/src/router/index.js
  * @Description: 
  */
