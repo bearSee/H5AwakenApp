@@ -9,7 +9,7 @@
 <template>
   <div class="share-page-login">
     <div class="login-head">
-      <div v-if="isWechat">
+      <div v-if="isWechat" class="wechat-box">
         <img src="@/assets/image/applogo.png" alt="" srcset="">
         <div class="dots">
           <span></span>
