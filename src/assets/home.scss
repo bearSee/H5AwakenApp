@@ -65,6 +65,8 @@
           margin: auto .04rem;
           width: .16rem;
           height: .16rem;
+          position: relative;
+          top: -.01rem;
         }
         span {
           margin: auto 0;
@@ -102,8 +104,8 @@
     }
     .van-empty {
       .van-empty__image {
-        width: 2.46rem;
-        height: 1.4rem;
+        width: 3rem;
+        height: 1.5rem;
       }
       .van-empty__bottom {
         font-size: .15rem;
@@ -123,9 +125,40 @@
       .van-swipe-item {
         display: flex;
         justify-content: center;
-        img {
-          width: 2.5rem;
-          transform: scale(.8);
+        .banner-box {
+          font-size: .24rem;
+          display: flex;
+          flex-direction: column;
+          justify-content: center;
+          .box-title {
+            font-weight: 600;
+          }
+          .box-content {
+            font-size: .13rem;
+            color: #aaa;
+            margin-top: .15rem;
+            .box-btn {
+              font-size: .14rem;
+              margin-left: .1rem;
+              padding: .01rem .06rem;
+              padding-right: .1rem;
+              background: #009CEA;
+              color: #fff;
+              border-radius: .2rem;
+              &::after {
+                content: '';
+                display: inline-block;
+                width: .07rem;
+                height: .07rem;
+                border: .01rem solid #fff;
+                border-width: .01rem .01rem 0 0;
+                transform: rotate(45deg);
+                position: relative;
+                top: -.01rem;
+                right: -.02rem;
+              }
+            }
+          }
         }
       }
     }
@@ -146,13 +179,13 @@
     }
   }
   .overlay-dialog {
-    div {
-      position: absolute;
-      top: 40%;
-      left: 50%;
-      transform: translateX(-50%);
-      color: #fff;
-      font-size: .2rem;
+    img {
+      width: 100%;
+    }
+    .guide-btn {
+      width: 1rem;
+      display: flex;
+      margin: 0 auto;
     }
   }
 }

@@ -9,7 +9,15 @@
 <template>
   <div class="share-page-login">
     <div class="login-head">
-      <img v-if="isWechat" src="@/assets/image/wechat.png" alt="" srcset="">
+      <div v-if="isWechat">
+        <img src="@/assets/image/applogo.png" alt="" srcset="">
+        <div class="dots">
+          <span></span>
+          <span></span>
+          <span></span>
+        </div>
+        <img src="@/assets/image/wechat.png" alt="" srcset="">
+      </div>
       <div class="title">{{ isWechat ? '请登录云存宝账号，绑定微信' : '欢迎登录' }}</div>
       <div class="des">新用户登录后将自动创建帐号</div>
     </div>
@@ -60,7 +68,7 @@
       </van-form>
       <div class="wx-login-box" v-if="isWeixinEnv && !isWechat">
         <div>微信登录</div>
-        <img src="@/assets/image/wxlogin.png" @click="wxAuthorization" alt="" srcset="">
+        <img src="@/assets/image/wechat.png" @click="wxAuthorization" alt="" srcset="">
       </div>
       <!-- <pre style="font-size: .1rem;">
         <code>

@@ -26,11 +26,11 @@
             width=".33rem"
             height=".33rem"
             fit="cover"
-            :src="(userInfo.wechat || {}).head_img_url || userHeadImg || require('@/assets/image/user.png')"/>
+            :src="(userInfo.wechat || {}).head_img_url || userHeadImg || require('@/assets/image/profile_avatar.png')"/>
           <span class="nickname">{{ (userInfo.wechat || {}).nickname || userInfo.nickname || '登录' }}</span>
         </div>
         <div class="operate" @click="isGird = !isGird">
-          <img class="gird" :src="require(`@/assets/image/${isGird ? 'gird' : 'large'}.png`)" alt="" srcset="">
+          <img class="gird" :src="require(`@/assets/image/${isGird ? 'menu_view_grid' : 'menu_view_pic'}.png`)" alt="" srcset="">
           <span>{{ isGird ? '宫格' : '大图' }}</span>
         </div>
       </div>
@@ -45,18 +45,24 @@
           <van-image :src="image.url" @click="handlerPreview(i)" fit="cover"/>
         </van-grid-item>
       </van-grid>
-      <van-empty v-else :image="require(`@/assets/image/empty.png`)" >
+      <van-empty v-else :image="require(`@/assets/image/404.png`)" >
         <div class="tip-t">该分享已失效</div>
         <div class="tip-c">为保护用户信息安全，分享超过24小时候自动失效</div>
       </van-empty>
       <van-swipe class="my-swipe" :autoplay="3000" indicator-color="white">
-        <van-swipe-item v-for="d in 5" :key="d">
-          <img src="@/assets/image/banner.png" alt="" srcset="">
+        <van-swipe-item v-for="d in 2" :key="d">
+          <div class="banner-box">
+            <div class="box-title">使用云存宝分享</div>
+            <div class="box-content">
+              <span>速度\安全\快捷</span>
+              <span class="box-btn">享特惠</span>
+            </div>
+          </div>
         </van-swipe-item>
       </van-swipe>
       <van-button
         class="save-app-btn"
-        :icon="require('@/assets/image/onekeysave.png')"
+        :icon="require('@/assets/image/btn_save.png')"
         @click="handlerOpenApp">
         一键转存云存宝
       </van-button>
@@ -76,7 +82,8 @@
 
     </div>
     <van-overlay class="overlay-dialog" :show="overlayVisible" @click="overlayVisible = false">
-      <div>请在手机浏览器打开</div>
+      <img src="@/assets/image/guide_content.png" alt="" srcset="">
+      <img class="guide-btn" src="@/assets/image/guide_btn.png" alt="" srcset="">
     </van-overlay>
   </div>
 </template>

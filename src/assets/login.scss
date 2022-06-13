@@ -12,9 +12,26 @@
     font-weight: 400;
     color: #000000;
     text-align: center;
-    img {
-      width: 2.1rem;
+    .wechat-box {
+      display: flex;
+      justify-content: center;
       margin-bottom: .3rem;
+      img {
+        width: .5rem;
+        height: .5rem;
+      }
+      .dots {
+        width: .24rem;
+        margin: auto .13rem;
+        display: flex;
+        justify-content: space-between;
+        span {
+          width: .03rem;
+          height: .03rem;
+          background: #a5a5a5;
+          border-radius: 50%;
+        }
+      }
     }
     .des {
       font-size: .13rem;

@@ -16,9 +16,29 @@
   text-align: center;
 }
 
-.share-page-login .login-head img {
-  width: 2.1rem;
+.share-page-login .login-head .wechat-box {
+  display: flex;
+  justify-content: center;
   margin-bottom: .3rem;
+}
+
+.share-page-login .login-head .wechat-box img {
+  width: .5rem;
+  height: .5rem;
+}
+
+.share-page-login .login-head .wechat-box .dots {
+  width: .24rem;
+  margin: auto .13rem;
+  display: flex;
+  justify-content: space-between;
+}
+
+.share-page-login .login-head .wechat-box .dots span {
+  width: .03rem;
+  height: .03rem;
+  background: #a5a5a5;
+  border-radius: 50%;
 }
 
 .share-page-login .login-head .des {
