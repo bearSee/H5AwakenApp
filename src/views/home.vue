@@ -2,7 +2,7 @@
  * @Author: 熊望
  * @Date: 2022-06-02 23:36:44
  * @LastEditors: 熊望
- * @LastEditTime: 2022-06-11 22:27:34
+ * @LastEditTime: 2022-06-14 01:16:31
  * @FilePath: /nginx/Users/bear/Desktop/H5AwakenApp/src/views/home.vue
  * @Description: 
 -->
@@ -67,18 +67,18 @@
         一键转存云存宝
       </van-button>
       
-      <!-- <van-button block @click="getAddress">
+      <van-button block @click="getAddress">
         获取地址
       </van-button>
-      <van-button block @click="clearStorage">
+      <!-- <van-button block @click="clearStorage">
         清除缓存，退出登录(测试)
-      </van-button>
+      </van-button> -->
 
       <pre style="font-size: .1rem;">
         <code>
           {{ '\n' + JSON.stringify($store.state, null, 2) }}
         </code>
-      </pre> -->
+      </pre>
 
     </div>
     <div class="mask-box" v-show="overlayVisible" />
@@ -92,7 +92,7 @@
 <script>
 import { ref, computed } from 'vue';
 import { useStore } from 'vuex';
-import { Toast, ImagePreview } from 'vant';
+import { ImagePreview } from 'vant';
 
 export default {
     name: 'shareHome',
@@ -134,21 +134,21 @@ export default {
       },
       handlerOpenApp() {
           if (!this.isWeixin && (this.isAndroid || this.isIOS)) {
-              Toast.loading({
-                  duration: 2000,
-                  message: '加载中...',
-                  forbidClick: true,
-              });
-              const { token } = this.$store.state.userInfo;
-              const { id } = this.$store.state.queryParams;
+              // Toast.loading({
+              //     duration: 2000,
+              //     message: '加载中...',
+              //     forbidClick: true,
+              // });
+              const token = window.localStorage.getItem('token');
+              const shareId = window.sessionStorage.getItem('shareId');
               const type = this.isAndroid ? 'android' : 'ios';
               const urlConfig = {
                   android: {
-                      openUrl: `myscheme://myhost:1024/main?key1=${id}&key2=${token}`,
+                      openUrl: `myscheme://myhost:1024/main?key1=${shareId}&key2=${token}`,
                       downloadUrl: 'https://hmd-down.oss-cn-hangzhou.aliyuncs.com/hificloud/android/release.apk',
                   },
                   ios: {
-                      openUrl: `https://share.hificloud.net/share?id=${id}&token=${token}.dde.1wx`,
+                      openUrl: `https://share.hificloud.net/share?id=${shareId}&token=${token}.dde.1wx`,
                       downloadUrl: 'https://apps.apple.com/cn/app/hificloud/id1543197598',
                   },
               };
@@ -172,6 +172,12 @@ export default {
   },
   mounted() {
       if (!this.isLogined) this.wxAuthorization();
+      if (this.isWeixin) {
+        setTimeout(() => {
+            this.getImages();
+        }, 800);
+        return;
+      }
       this.getImages();
   },
 }

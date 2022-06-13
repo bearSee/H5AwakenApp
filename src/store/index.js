@@ -2,7 +2,7 @@
  * @Author: 熊望
  * @Date: 2022-06-02 23:44:20
  * @LastEditors: 熊望
- * @LastEditTime: 2022-06-11 20:20:35
+ * @LastEditTime: 2022-06-14 01:15:39
  * @FilePath: /nginx/Users/bear/Desktop/H5AwakenApp/src/store/index.js
  * @Description: 
  */
@@ -18,8 +18,8 @@ export default createStore({
         isLogined: false,
         userInfo: {},
         userHeadImg: '',
-        // normal/invalid/offline
-        imageStatus: 'invalid',
+        // empty/invalid/offline
+        imageStatus: 'empty',
         images: [],
     },
     getters: {},
@@ -39,7 +39,7 @@ export default createStore({
             state.userHeadImg = payload || '';
         },
         setImageStatus(state, payload) {
-            state.imageStatus = payload || 'invalid';
+            state.imageStatus = payload || 'empty';
         },
         setImages(state, payload) {
             state.images = payload || [];
@@ -65,28 +65,23 @@ export default createStore({
         getQueryParams({ commit }) {
             let [, paramsString = ''] = window.location.href.split('?');
             paramsString = paramsString.split('#/')[0];
-            const params = paramsString && qs.parse(paramsString) || {};
-            const queryParams = {
-                ...params,
-                id: params.id || params.state || '',
-            };
+            const queryParams = paramsString && qs.parse(paramsString) || {};
+            window.sessionStorage.setItem('shareId', queryParams.id || '');
             commit('setQueryParams', queryParams);
         },
-        getImageList({ state, commit }) {
-            const { id } = state.queryParams;
-            if (!id) return;
-            axios.get(`${window._businessRoot}v1/share/media/list?id=${id}`).then((res) => {
+        getImageList({ commit }) {
+            const shareId = window.sessionStorage.getItem('shareId');
+            if (!shareId) return;
+            axios.get(`${window._businessRoot}v1/share/media/list?id=${shareId}`).then((res) => {
                 const data = (((res && res.data || {}).data || {}).content || []).map(d => ({
                     ...d,
-                    url: `${window._businessRoot}v1/file/img?id=${id}&md5=${d.md5}&option=2`,
-                    thumbnailUrl: `${window._businessRoot}v1/file/img?id=${id}&md5=${d.md5}&option=1`,
-                    originUrl: `${window._businessRoot}v1/file/img?id=${id}&md5=${d.md5}&option=0`,
+                    url: `${window._businessRoot}v1/file/img?id=${shareId}&md5=${d.md5}&option=2`,
+                    thumbnailUrl: `${window._businessRoot}v1/file/img?id=${shareId}&md5=${d.md5}&option=1`,
+                    originUrl: `${window._businessRoot}v1/file/img?id=${shareId}&md5=${d.md5}&option=0`,
                 }));
                 commit('setImages', data);
-                commit('setImageStatus', 'normal');
             }).catch((err) => {
                 const imageStatus = ({
-                    200: 'normal',
                     1000001: 'offline',
                     1000002: 'invalid',
                 })[(err && err.data || {}).status];
@@ -100,9 +95,9 @@ export default createStore({
          */
         wxAuthorization({ state, dispatch }) {
             if (!/MicroMessenger/i.test(window.navigator.userAgent.toLowerCase())) return;
-            const { code, id } = state.queryParams;
+            const { code } = state.queryParams;
             if (code) {
-                dispatch('wxLogin');
+                if (window.sessionStorage.getItem('tryWxLogin') !== '1') dispatch('wxLogin');
                 return;
             }
             const url = 'https://open.weixin.qq.com/connect/oauth2/authorize';
@@ -115,22 +110,27 @@ export default createStore({
                 redirect_uri,
                 response_type,
                 scope,
-                state: id,
+                state: '',
             })}#wechat_redirect`;
             window.location.href = newUrl;
         },
-        wxLogin({ state, dispatch }) {
+        wxLogin({ state, commit, dispatch }) {
             const { code } = state.queryParams;
+            window.sessionStorage.setItem('tryWxLogin', '1');
             axios.post('/app/user/social/wechat/login', { code }).then((res) => {
                 const data = (res && res.data || {}).data;
                 dispatch('loginSuccess', data);
+            }).catch(async (err) => {
+                if (String((err && err.data || {}).status) === '1805') {
+                    await commit('clearAuthorization');
+                    dispatch('wxAuthorization');
+                }
             });
         },
         handlerLogin({ state, dispatch }, payload) {
-            const code = state.queryParams.code || '';
             return new Promise((resolve) => {
                 axios.post('/app/user/social/wechat/quick/login', {
-                    code,
+                    code: state.queryParams.code || '',
                     ...payload,
                 }).then((res) => {
                     dispatch('loginSuccess', (res && res.data || {}).data);
@@ -138,9 +138,9 @@ export default createStore({
                 });
             });
         },
-        loginSuccess({ state, commit }, payload) {
+        loginSuccess({ commit }, payload) {
             const queryParams = {
-                id: (state.queryParams || '').id || '',
+                id: window.sessionStorage.getItem('shareId'),
                 nickname: payload.nickname || '',
                 token: payload.token || '',
             };
@@ -155,6 +155,11 @@ export default createStore({
             const { token, nickname } = payload || {};
             return new Promise((resolve) => {
                 window.localStorage.setItem('token', token);
+                if (!token) {
+                    resolve(false);
+                    commit('clearAuthorization');
+                    return;
+                }
                 axios.get('/token/verify').then((res) => {
                     const isLogined = !!(res && res.data && res.data || {}).data;
                     if (isLogined) {
