@@ -54,16 +54,16 @@ Axios.interceptors.response.use(
             store.commit('clearAuthorization');
             return res;
         }
-        Toast({
-            message: (res.data || {}).message,
-            forbidClick: true,
-        });
+        // Toast({
+        //     message: (res.data || {}).message,
+        //     forbidClick: true,
+        // });
 
         return Promise.reject(res);
     },
     (error) => {
         Toast.clear();
-        Toast('服务器异常\n请稍后重试');
+        // Toast('服务器异常\n请稍后重试');
         return Promise.reject(error);
     },
 );

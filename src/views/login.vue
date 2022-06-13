@@ -95,7 +95,7 @@ export default {
       return {
           isWeixinEnv: /MicroMessenger/i.test(ua),
           isWechat: ref(!!state.queryParams.code),
-          agreed: ref(true),
+          agreed: ref(false),
           telephone: ref(''),
           auth: ref(''),
           timeout: ref(0),

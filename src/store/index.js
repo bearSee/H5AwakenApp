@@ -18,6 +18,8 @@ export default createStore({
         isLogined: false,
         userInfo: {},
         userHeadImg: '',
+        // normal/invalid/offline
+        imageStatus: 'invalid',
         images: [],
     },
     getters: {},
@@ -35,6 +37,9 @@ export default createStore({
         },
         setUserHeadImg(state, payload) {
             state.userHeadImg = payload || '';
+        },
+        setImageStatus(state, payload) {
+            state.imageStatus = payload || 'invalid';
         },
         setImages(state, payload) {
             state.images = payload || [];
@@ -78,6 +83,14 @@ export default createStore({
                     originUrl: `${window._businessRoot}v1/file/img?id=${id}&md5=${d.md5}&option=0`,
                 }));
                 commit('setImages', data);
+                commit('setImageStatus', 'normal');
+            }).catch((err) => {
+                const imageStatus = ({
+                    200: 'normal',
+                    1000001: 'offline',
+                    1000002: 'invalid',
+                })[(err && err.data || {}).status];
+                commit('setImageStatus', imageStatus);
             });
         },
         /**
@@ -85,10 +98,13 @@ export default createStore({
          * wx1fcdb848faaefcf9
          * AppSecret: 496cf4fdf48ea6b5854f6c1bc13729b6
          */
-        wxAuthorization({ state }) {
+        wxAuthorization({ state, dispatch }) {
             if (!/MicroMessenger/i.test(window.navigator.userAgent.toLowerCase())) return;
             const { code, id } = state.queryParams;
-            if (code) return;
+            if (code) {
+                dispatch('wxLogin');
+                return;
+            }
             const url = 'https://open.weixin.qq.com/connect/oauth2/authorize';
             const appid = 'wx1fcdb848faaefcf9';
             const redirect_uri = (window.location.href.split('?')[0] || '').split('#/')[0];
@@ -102,6 +118,13 @@ export default createStore({
                 state: id,
             })}#wechat_redirect`;
             window.location.href = newUrl;
+        },
+        wxLogin({ state, dispatch }) {
+            const { code } = state.queryParams;
+            axios.post('/app/user/social/wechat/login', { code }).then((res) => {
+                const data = (res && res.data || {}).data;
+                dispatch('loginSuccess', data);
+            });
         },
         handlerLogin({ state, dispatch }, payload) {
             const code = state.queryParams.code || '';
@@ -125,7 +148,7 @@ export default createStore({
             commit('setQueryParams', queryParams);
             commit('setUserInfo', payload);
             axios.get('/head/img').then((r) => {
-                commit('setUserHeadImg', (r && r.data && r.data || {}).data);
+                commit('setUserHeadImg', ((r && r.data && r.data || {}).data || {}).url);
             });
         },
         checkLoginStatus({ state, commit, dispatch }, payload) {

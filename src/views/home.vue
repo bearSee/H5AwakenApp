@@ -42,12 +42,12 @@
       </div>
       <van-grid v-if="images.length" square :gutter="1" :border="false" :column-num="isGird ? 3 : 1">
         <van-grid-item v-for="(image, i) in images" :key="image.id">
-          <van-image :src="image.url" @click="handlerPreview(i)" fit="cover"/>
+          <van-image :src="image.thumbnailUrl" @click="handlerPreview(i)" fit="cover"/>
         </van-grid-item>
       </van-grid>
       <van-empty v-else :image="require(`@/assets/image/404.png`)" >
-        <div class="tip-t">该分享已失效</div>
-        <div class="tip-c">为保护用户信息安全，分享超过24小时候自动失效</div>
+        <div class="tip-t">{{ ({ offline: '设备离线', invalid: '该分享已失效' })[imageStatus] }}</div>
+        <div class="tip-c">{{ ({ offline: '抱歉，此设备网络或状态异常，无法访问', invalid: '为保护用户信息安全，分享超过24小时候自动失效' })[imageStatus] }}</div>
       </van-empty>
       <van-swipe class="my-swipe" :autoplay="3000" indicator-color="white">
         <van-swipe-item v-for="d in 2" :key="d">
@@ -81,6 +81,7 @@
       </pre> -->
 
     </div>
+    <div class="mask-box" v-show="overlayVisible" />
     <van-overlay class="overlay-dialog" :show="overlayVisible" @click="overlayVisible = false">
       <img src="@/assets/image/guide_content.png" alt="" srcset="">
       <img class="guide-btn" src="@/assets/image/guide_btn.png" alt="" srcset="">
@@ -102,6 +103,7 @@ export default {
           isLogined: computed(() => state.isLogined),
           userInfo: computed(() => state.userInfo),
           userHeadImg: computed(() => state.userHeadImg),
+          imageStatus: computed(() => state.imageStatus),
           images: computed(() => state.images),
           // 是否为宫格展示
           isGird: ref(true),
@@ -123,10 +125,11 @@ export default {
           this.$router.push('/login');
       },
       handlerPreview(startPosition) {
-        const images = JSON.parse(JSON.stringify(this.images)).map(({ originUrl }) => originUrl);
+        const images = JSON.parse(JSON.stringify(this.images)).map(({ url }) => url);
           ImagePreview({
               images,
               startPosition,
+              closeable: true,
           });
       },
       handlerOpenApp() {

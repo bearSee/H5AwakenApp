@@ -36,10 +36,10 @@ const router = createRouter({
 router.beforeEach(async (to, from, next) => {
     if (!state.queryParams) await dispatch('getQueryParams');
 
-    if (to.path !== '/login' && !state.isLogined && state.queryParams.code) {
-        next('/login');
-        return;
-    }
+    // if (to.path !== '/login' && !state.isLogined && state.queryParams.code) {
+    //     next('/login');
+    //     return;
+    // }
 
     if (!state.isLogined) {
         const historyInfo = window.localStorage.getItem('userInfo');
