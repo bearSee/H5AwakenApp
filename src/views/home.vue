@@ -45,12 +45,21 @@
           <van-image :src="image.thumbnailUrl" @click="handlerPreview(i)" fit="cover"/>
         </van-grid-item>
       </van-grid>
-      <van-empty v-else :image="require(`@/assets/image/404.png`)" >
-        <div class="tip-t">{{ ({ offline: '设备离线', invalid: '该分享已失效' })[imageStatus] }}</div>
-        <div class="tip-c">{{ ({ offline: '抱歉，此设备网络或状态异常，无法访问', invalid: '为保护用户信息安全，分享超过24小时候自动失效' })[imageStatus] }}</div>
+      <van-empty v-else :class="imageStatus" :image="require(`@/assets/image/${imageStatus === 'offline' ? '404' : 'empty'}.png`)" >
+        <div class="tip-t">{{ ({
+          offline: '设备离线',
+          invalid: '该分享已失效',
+          empty: '正在获取分享内容...',
+        })[imageStatus] }}</div>
+        <div class="tip-c">{{ ({
+          offline: '抱歉，此设备网络或状态异常，无法访问',
+          invalid: '为保护用户信息安全，分享超过24小时候自动失效',
+          empty: '请稍后',
+        })[imageStatus] }}</div>
       </van-empty>
-      <van-swipe class="my-swipe" :autoplay="3000" indicator-color="white">
-        <van-swipe-item v-for="d in 2" :key="d">
+      <img class="banner-image" src="@/assets/image/banner.png" alt="" srcset="">
+      <!-- <van-swipe class="my-swipe" :autoplay="3000" indicator-color="white">
+        <van-swipe-item v-for="d in 1" :key="d">
           <div class="banner-box">
             <div class="box-title">使用云存宝分享</div>
             <div class="box-content">
@@ -59,7 +68,7 @@
             </div>
           </div>
         </van-swipe-item>
-      </van-swipe>
+      </van-swipe> -->
       <van-button
         class="save-app-btn"
         :icon="require('@/assets/image/btn_save.png')"
@@ -67,21 +76,23 @@
         一键转存云存宝
       </van-button>
       
-      <van-button block @click="getAddress">
+      <!-- <van-button block @click="getAddress">
         获取地址
       </van-button>
-      <!-- <van-button block @click="clearStorage">
+      <van-button block @click="clearStorage">
         清除缓存，退出登录(测试)
-      </van-button> -->
+      </van-button>
 
       <pre style="font-size: .1rem;">
         <code>
           {{ '\n' + JSON.stringify($store.state, null, 2) }}
         </code>
-      </pre>
+      </pre> -->
 
     </div>
-    <div class="mask-box" v-show="overlayVisible" />
+    <div class="mask-box" v-show="overlayVisible">
+      <img src="@/assets/image/mask.png" alt="" srcset="">
+    </div>
     <van-overlay class="overlay-dialog" :show="overlayVisible" @click="overlayVisible = false">
       <img src="@/assets/image/guide_content.png" alt="" srcset="">
       <img class="guide-btn" src="@/assets/image/guide_btn.png" alt="" srcset="">
@@ -156,7 +167,7 @@ export default {
               window.location.href = openUrl;
               setTimeout(() => {
                   const hidden = window.document.hidden || window.document.mozHidden || window.document.msHidden || window.document.webkitHidden;
-                  if (!hidden) window.location.href = downloadUrl;
+                  if (type === 'android' && !hidden) window.location.href = downloadUrl;
               }, 2000);
               return;
           }
@@ -171,12 +182,9 @@ export default {
       },
   },
   mounted() {
-      if (!this.isLogined) this.wxAuthorization();
       if (this.isWeixin) {
-        setTimeout(() => {
-            this.getImages();
-        }, 800);
-        return;
+          setTimeout(() => { this.getImages(); }, 800);
+          return;
       }
       this.getImages();
   },

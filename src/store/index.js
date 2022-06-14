@@ -11,6 +11,9 @@ import { createStore } from 'vuex';
 import axios from '@/plugins/axios';
 import qs from 'qs';
 
+const listener = () => {
+    history.pushState(null, null, document.URL);
+};
 
 export default createStore({
     state: {
@@ -25,7 +28,7 @@ export default createStore({
     getters: {},
     mutations: {
         setQueryParams(state, payload) {
-            state.queryParams = payload || {};
+            state.queryParams = payload || null;
         },
         setLogined(state, payload) {
             state.isLogined = payload;
@@ -44,19 +47,30 @@ export default createStore({
         setImages(state, payload) {
             state.images = payload || [];
         },
-        setURLStatic(state, payload = {}) {
+        setURLStatic(state, canback) {
             const host = window.location.href.split('?')[0];
-            history.replaceState(null, null, `${host}?${qs.stringify(payload)}`);
+            const nickname = (state.userInfo.wechat || {}).nickname || state.userInfo.nickname || '';
+            const newUrl = `${host}?${qs.stringify({
+                id: window.sessionStorage.getItem('shareId'),
+                nickname,
+                token: window.localStorage.getItem('token'),
+            })}`;
+            if (canback) {
+                window.removeEventListener('popstate', listener);
+                history.replaceState(null, null, newUrl);
+            } else {
+                history.pushState(null, null, newUrl);
+                window.removeEventListener('popstate', listener);
+                window.addEventListener('popstate', listener);
+            }
         },
         clearAuthorization(state) {
-            const queryParams = { id: state.queryParams.id || '' };
-            state.queryParams = queryParams;
+            state.queryParams = { id: window.sessionStorage.getItem('shareId') };
             state.userInfo = {};
             state.userHeadImg = '';
             state.isLogined = false;
-            window.localStorage.clear();
-            const host = window.location.href.split('?')[0];
-            history.replaceState(null, null, `${host}?${qs.stringify(queryParams)}`);
+            window.localStorage.removeItem('userInfo');
+            window.localStorage.removeItem('token');
         },
     },
     actions: {
@@ -66,8 +80,8 @@ export default createStore({
             let [, paramsString = ''] = window.location.href.split('?');
             paramsString = paramsString.split('#/')[0];
             const queryParams = paramsString && qs.parse(paramsString) || {};
-            window.sessionStorage.setItem('shareId', queryParams.id || '');
-            commit('setQueryParams', queryParams);
+            if (queryParams.id) window.sessionStorage.setItem('shareId', queryParams.id);
+            commit('setQueryParams', { ...queryParams, redirectPath: queryParams.state || '' });
         },
         getImageList({ commit }) {
             const shareId = window.sessionStorage.getItem('shareId');
@@ -84,7 +98,7 @@ export default createStore({
                 const imageStatus = ({
                     1000001: 'offline',
                     1000002: 'invalid',
-                })[(err && err.data || {}).status];
+                })[(err && err.data || {}).status] || 'offline';
                 commit('setImageStatus', imageStatus);
             });
         },
@@ -93,13 +107,8 @@ export default createStore({
          * wx1fcdb848faaefcf9
          * AppSecret: 496cf4fdf48ea6b5854f6c1bc13729b6
          */
-        wxAuthorization({ state, dispatch }) {
+        wxAuthorization(context, path) {
             if (!/MicroMessenger/i.test(window.navigator.userAgent.toLowerCase())) return;
-            const { code } = state.queryParams;
-            if (code) {
-                if (window.sessionStorage.getItem('tryWxLogin') !== '1') dispatch('wxLogin');
-                return;
-            }
             const url = 'https://open.weixin.qq.com/connect/oauth2/authorize';
             const appid = 'wx1fcdb848faaefcf9';
             const redirect_uri = (window.location.href.split('?')[0] || '').split('#/')[0];
@@ -110,13 +119,13 @@ export default createStore({
                 redirect_uri,
                 response_type,
                 scope,
-                state: '',
+                state: path || '',
             })}#wechat_redirect`;
-            window.location.href = newUrl;
+            window.location.replace(newUrl);
         },
         wxLogin({ state, commit, dispatch }) {
-            const { code } = state.queryParams;
-            window.sessionStorage.setItem('tryWxLogin', '1');
+            const { code } = state.queryParams || {};
+            window.sessionStorage.setItem('hastrywxlogin', 'Y');
             axios.post('/app/user/social/wechat/login', { code }).then((res) => {
                 const data = (res && res.data || {}).data;
                 dispatch('loginSuccess', data);
@@ -130,7 +139,7 @@ export default createStore({
         handlerLogin({ state, dispatch }, payload) {
             return new Promise((resolve) => {
                 axios.post('/app/user/social/wechat/quick/login', {
-                    code: state.queryParams.code || '',
+                    code: (state.queryParams || {}).code || '',
                     ...payload,
                 }).then((res) => {
                     dispatch('loginSuccess', (res && res.data || {}).data);
@@ -139,14 +148,9 @@ export default createStore({
             });
         },
         loginSuccess({ commit }, payload) {
-            const queryParams = {
-                id: window.sessionStorage.getItem('shareId'),
-                nickname: payload.nickname || '',
-                token: payload.token || '',
-            };
-            commit('setURLStatic', queryParams);
-            commit('setQueryParams', queryParams);
+            commit('setLogined', true);
             commit('setUserInfo', payload);
+            commit('setURLStatic');
             axios.get('/head/img').then((r) => {
                 commit('setUserHeadImg', ((r && r.data && r.data || {}).data || {}).url);
             });
@@ -160,17 +164,9 @@ export default createStore({
                     commit('clearAuthorization');
                     return;
                 }
-                axios.get('/token/verify').then((res) => {
+                axios.get('/token/verify').then(async (res) => {
                     const isLogined = !!(res && res.data && res.data || {}).data;
-                    if (isLogined) {
-                        dispatch('loginSuccess', {
-                            nickname: (state.queryParams || '').nickname || nickname || '',
-                            token,
-                        });
-                        commit('setLogined', true);
-                    } else {
-                        commit('clearAuthorization');
-                    }
+                    isLogined ? await dispatch('loginSuccess', { nickname: (state.queryParams || {}).nickname || nickname || '', token }) : await commit('clearAuthorization');
                     resolve(isLogined);
                 }).catch(() => {
                     resolve(false);

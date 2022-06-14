@@ -50,7 +50,7 @@
         background: #f2f2f6;
         .verification-code-btn {
           background: transparent;
-          color: #009CEA;
+          color: #007AFF;
           border: 0;
           margin-left: .15rem;
         }
@@ -62,6 +62,12 @@
         }
       }
       .agreed-checkbox {
+        .img-icon {
+          width: .16rem;
+          height: .16rem;
+          position: relative;
+          top: -.01rem;
+        }
         .van-checkbox__icon {
           font-size: .15rem;
         }
@@ -69,7 +75,7 @@
           font-size: .13rem;
           color: #8F92A1;
           .txt {
-            color: #009CEA;
+            color: #007AFF;
           }
         }
       }
@@ -78,7 +84,7 @@
       margin-top: .08rem;
       .van-button {
         height: .46rem;
-        background: #41507B;
+        background: #007AFF;
         opacity: 0.7;
         border-radius: .1rem;
         font-size: .15rem;

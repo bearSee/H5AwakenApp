@@ -9,13 +9,13 @@
 import { createRouter, createWebHashHistory } from 'vue-router';
 import store from '@/store';
 
-const { state, dispatch } = store;
+const { state, commit, dispatch } = store;
 
 const routes = [
-    {
-        path: '/',
-        redirect: '/home',
-    },
+    // {
+    //     path: '/',
+    //     redirect: '/home',
+    // },
     {
         path: '/login',
         name: 'login',
@@ -31,29 +31,62 @@ const routes = [
 const router = createRouter({
     history: createWebHashHistory(),
     routes: routes,
-})
+});
+
 
 router.beforeEach(async (to, from, next) => {
     if (!state.queryParams) await dispatch('getQueryParams');
 
-    // if (to.path !== '/login' && !state.isLogined && state.queryParams.code) {
-    //     next('/login');
-    //     return;
-    // }
-
+    const wxCode = state.queryParams.code;
+    
     if (!state.isLogined) {
         const historyInfo = window.localStorage.getItem('userInfo');
+        let isLogined = false;
         // 从url参数判断是否已经登录
         if (state.queryParams.token) {
-            await dispatch('checkLoginStatus', state.queryParams);
+            isLogined = await dispatch('checkLoginStatus', state.queryParams);
         } else if (historyInfo) {
             // 从本地存储判断是否已经登录
             try {
-                await dispatch('checkLoginStatus', JSON.parse(historyInfo));
+                isLogined = await dispatch('checkLoginStatus', JSON.parse(historyInfo));
             } catch (error) {
                 console.error(error);
             }
         }
+
+        const hastrywxlogin = window.sessionStorage.getItem('hastrywxlogin') === 'Y';
+        const iswxEnv = /MicroMessenger/i.test(window.navigator.userAgent.toLowerCase());
+        if (!isLogined && !hastrywxlogin && iswxEnv) {
+            await dispatch(wxCode ? 'wxLogin' : 'wxAuthorization', to.name);
+            if (!wxCode) {
+                await new Promise((r) => {
+                    setTimeout(() => { r(); }, 2000);
+                });
+                window.sessionStorage.setItem('hastrywxlogin', 'Y');
+                next('/home');
+            }
+            return;
+        }
+    }
+
+    await commit('setURLStatic', to.path === '/login');
+
+    // if (to.path !== '/home' && state.isLogined) {
+    //     next('/home');
+    //     return;
+    // }
+    if (state.isLogined && to.path === '/login') {
+        return;
+    }
+    
+    if (!['/home', '/login'].includes(to.path)) {
+        next('/home');
+        return;
+    }
+
+    if ((state.queryParams || {}).redirectPath && (state.queryParams || {}).redirectPath !== to.name) {
+        next(`/${state.queryParams.redirectPath}`);
+        return;
     }
 
     next();

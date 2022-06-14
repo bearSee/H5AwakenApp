@@ -64,7 +64,7 @@
 
 .share-page-login .van-form .van-cell-group .van-cell .verification-code-btn {
   background: transparent;
-  color: #009CEA;
+  color: #007AFF;
   border: 0;
   margin-left: .15rem;
 }
@@ -77,6 +77,13 @@
   display: none;
 }
 
+.share-page-login .van-form .van-cell-group .agreed-checkbox .img-icon {
+  width: .16rem;
+  height: .16rem;
+  position: relative;
+  top: -.01rem;
+}
+
 .share-page-login .van-form .van-cell-group .agreed-checkbox .van-checkbox__icon {
   font-size: .15rem;
 }
@@ -87,7 +94,7 @@
 }
 
 .share-page-login .van-form .van-cell-group .agreed-checkbox .van-checkbox__label .txt {
-  color: #009CEA;
+  color: #007AFF;
 }
 
 .share-page-login .van-form .submit-box {
@@ -96,7 +103,7 @@
 
 .share-page-login .van-form .submit-box .van-button {
   height: .46rem;
-  background: #41507B;
+  background: #007AFF;
   opacity: 0.7;
   border-radius: .1rem;
   font-size: .15rem;

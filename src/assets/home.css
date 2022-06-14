@@ -12,6 +12,7 @@
   justify-content: space-between;
   height: .56rem;
   background: #F2F2F6;
+  margin-top: .04rem;
 }
 
 .share-page-home .home-head .app-box {
@@ -35,19 +36,20 @@
   color: #000;
   font-size: .15rem;
   margin-bottom: .05rem;
+  font-weight: 600;
 }
 
 .share-page-home .home-head .van-button {
   margin: auto 0;
   width: .65rem;
   height: .25rem;
-  background: #009CEA;
+  background: #007AFF;
   border-radius: .13rem;
   text-align: center;
 }
 
 .share-page-home .home-body {
-  height: calc(100% - .56rem);
+  height: calc(100% - .6rem);
   padding: .2rem 0;
   padding-bottom: .8rem;
   overflow-x: hidden;
@@ -62,7 +64,7 @@
 }
 
 .share-page-home .home-body .user-info .info {
-  color: #009CEA;
+  color: #007AFF;
   display: flex;
 }
 
@@ -101,6 +103,7 @@
   font-size: .15rem;
   color: #1A1A1A;
   margin-bottom: .08rem;
+  font-weight: 600;
 }
 
 .share-page-home .home-body .photo-box .photo-c {
@@ -124,6 +127,11 @@
 .share-page-home .home-body .van-empty .van-empty__image {
   width: 3rem;
   height: 1.5rem;
+}
+
+.share-page-home .home-body .van-empty.empty .van-empty__image {
+  width: 1.24rem;
+  height: 1.11rem;
 }
 
 .share-page-home .home-body .van-empty .van-empty__bottom {
@@ -171,7 +179,7 @@
   margin-left: .1rem;
   padding: .01rem .06rem;
   padding-right: .1rem;
-  background: #009CEA;
+  background: #007AFF;
   color: #fff;
   border-radius: .2rem;
 }
@@ -189,17 +197,23 @@
   right: -.02rem;
 }
 
+.share-page-home .home-body .banner-image {
+  margin: .44rem 0 0 0;
+  width: 100%;
+}
+
 .share-page-home .home-body .save-app-btn {
   width: 2.12rem;
   height: .46rem;
   color: #fff;
-  background: #41507B;
+  background: #007AFF;
   border-radius: .23rem;
   position: fixed;
   bottom: .22rem;
   left: 50%;
   transform: translateX(-50%);
   font-size: .15rem;
+  border: 0;
 }
 
 .share-page-home .home-body .save-app-btn .van-icon__image {
@@ -222,9 +236,14 @@
   left: 0;
   right: 0;
   bottom: 0;
-  background-image: url(./image/mask.png);
-  background-position: center;
-  background-repeat: no-repeat;
-  background-size: cover;
   z-index: 0;
+}
+
+.share-page-home .mask-box img {
+  min-width: 100vw;
+  height: 100vh;
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
 }

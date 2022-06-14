@@ -55,6 +55,9 @@
           <van-field name="agreed" class="agreed-checkbox">
             <template #input>
               <van-checkbox v-model="agreed">
+                <template #icon="{ checked }">
+                  <img class="img-icon" :src="require(`@/assets/image/${checked ? 'checked' : 'unchecked'}.png`)" />
+                </template>
                 注册/登录即代表同意<span class="txt" @click.stop="">《用户协议》</span>和<span class="txt" @click.stop="">《隐私协议》</span>
               </van-checkbox>
             </template>
@@ -106,7 +109,7 @@ export default {
               });
           },
           wxAuthorization: () => {
-              dispatch('wxAuthorization');
+              dispatch('wxAuthorization', 'login');
           },
       };
   },
