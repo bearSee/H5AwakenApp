@@ -122,6 +122,17 @@
 .share-page-home .home-body .van-grid .van-grid-item .van-grid-item__content .van-image {
   height: 100%;
   width: 100%;
+  position: relative;
+}
+
+.share-page-home .home-body .van-grid .van-grid-item .van-grid-item__content .van-image .play-btn {
+  width: .35rem;
+  height: .35rem;
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
+  z-index: 1;
 }
 
 .share-page-home .home-body .van-empty .van-empty__image {
@@ -211,6 +222,7 @@
   position: fixed;
   bottom: .22rem;
   left: 50%;
+  z-index: 1;
   transform: translateX(-50%);
   font-size: .15rem;
   border: 0;

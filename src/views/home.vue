@@ -42,7 +42,10 @@
       </div>
       <van-grid v-if="images.length" square :gutter="1" :border="false" :column-num="isGird ? 3 : 1">
         <van-grid-item v-for="(image, i) in images" :key="image.id">
-          <van-image :src="image.thumbnailUrl" @click="handlerPreview(i)" fit="cover"/>
+          <video v-if="image.type === 1" style="object-fit: cover;" width="136" height="136" controls :poster="image.thumbnailUrl">
+            <source :src="image.originUrl" type="video/mp4">
+          </video>
+          <van-image v-else :src="image.thumbnailUrl" @click="handlerPreview(i)" fit="cover" />
         </van-grid-item>
       </van-grid>
       <van-empty v-else :class="imageStatus" :image="require(`@/assets/image/${imageStatus === 'offline' ? '404' : 'empty'}.png`)" >
@@ -93,10 +96,14 @@
     <div class="mask-box" v-show="overlayVisible">
       <img src="@/assets/image/mask.png" alt="" srcset="">
     </div>
-    <van-overlay class="overlay-dialog" :show="overlayVisible" @click="overlayVisible = false">
+    <van-overlay class="overlay-dialog" :show="overlayVisible">
       <img src="@/assets/image/guide_content.png" alt="" srcset="">
-      <img class="guide-btn" src="@/assets/image/guide_btn.png" alt="" srcset="">
+      <img class="guide-btn" src="@/assets/image/guide_btn.png" alt="" srcset=""  @click="overlayVisible = false">
     </van-overlay>
+    <!-- <van-image-preview v-model:show="show" :images="images" @change="onChange">
+      <template v-slot:index>第{{ index }}页</template>
+    </van-image-preview> -->
+    
   </div>
 </template>
 
@@ -116,6 +123,8 @@ export default {
           userHeadImg: computed(() => state.userHeadImg),
           imageStatus: computed(() => state.imageStatus),
           images: computed(() => state.images),
+          // currentImage: reactive({}),
+          // previewVisible: ref(false),
           // 是否为宫格展示
           isGird: ref(true),
           overlayVisible: ref(false),
@@ -135,12 +144,13 @@ export default {
           if (this.isLogined) return;
           this.$router.push('/login');
       },
-      handlerPreview(startPosition) {
-        const images = JSON.parse(JSON.stringify(this.images)).map(({ url }) => url);
+      handlerPreview(i) {
+        // const images = JSON.parse(JSON.stringify(this.images)).map(({ url }) => url);
           ImagePreview({
-              images,
-              startPosition,
+              images: [this.images[i].url],
+              // startPosition,
               closeable: true,
+              showIndex: false,
           });
       },
       handlerOpenApp() {

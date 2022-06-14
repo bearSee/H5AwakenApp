@@ -101,6 +101,16 @@
           .van-image {
             height: 100%;
             width: 100%;
+            position: relative;
+            .play-btn {
+              width: .35rem;
+              height: .35rem;
+              position: absolute;
+              left: 50%;
+              top: 50%;
+              transform: translate(-50%, -50%);
+              z-index: 1;
+            }
           }
         }
       }
@@ -184,6 +194,7 @@
       position: fixed;
       bottom: .22rem;
       left: 50%;
+      z-index: 1;
       transform: translateX(-50%);
       font-size: .15rem;
       border: 0;
