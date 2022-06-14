@@ -42,7 +42,7 @@
       </div>
       <van-grid v-if="images.length" square :gutter="1" :border="false" :column-num="isGird ? 3 : 1">
         <van-grid-item v-for="(image, i) in images" :key="image.id">
-          <video v-if="image.type === 1" style="object-fit: cover;" width="136" height="136" controls :poster="image.thumbnailUrl">
+          <video class="video" v-if="image.type === 1" controls :poster="image.thumbnailUrl">
             <source :src="image.originUrl" type="video/mp4">
           </video>
           <van-image v-else :src="image.thumbnailUrl" @click="handlerPreview(i)" fit="cover" />

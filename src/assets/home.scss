@@ -101,16 +101,11 @@
           .van-image {
             height: 100%;
             width: 100%;
-            position: relative;
-            .play-btn {
-              width: .35rem;
-              height: .35rem;
-              position: absolute;
-              left: 50%;
-              top: 50%;
-              transform: translate(-50%, -50%);
-              z-index: 1;
-            }
+          }
+          .video {
+            height: 100%;
+            width: 100%;
+            object-fit: cover;
           }
         }
       }
