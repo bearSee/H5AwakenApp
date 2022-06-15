@@ -2,8 +2,8 @@
  * @Author: 熊望
  * @Date: 2022-06-04 10:12:29
  * @LastEditors: 熊望
- * @LastEditTime: 2022-06-05 00:28:31
- * @FilePath: /nginx/Users/bear/Desktop/new-project/src/plugins/axios.js
+ * @LastEditTime: 2022-06-15 22:30:08
+ * @FilePath: /nginx/Users/bear/Desktop/H5AwakenApp/src/plugins/axios.js
  * @Description: 
  */
 import axios from 'axios';
@@ -50,10 +50,7 @@ Axios.interceptors.response.use(
     (res) => {
         Toast.clear();
         if (String((res.data || {}).status) === '200') return res;
-        if (String((res.data || {}).status) === '401') {
-            store.commit('clearAuthorization');
-            return res;
-        }
+        if (String((res.data || {}).status) === '401') store.commit('clearAuthorization');
         // Toast({
         //     message: (res.data || {}).message,
         //     forbidClick: true,

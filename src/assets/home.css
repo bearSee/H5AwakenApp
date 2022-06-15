@@ -139,7 +139,9 @@
   bottom: .08rem;
   font-size: .1rem;
   color: #fff;
-  border-radius: .02rem;
+  font-family: PingFang SC;
+  font-weight: bold;
+  text-shadow: 0 0.01rem 0.01rem rgba(143, 141, 141, 0.8);
 }
 
 .share-page-home .home-body .van-grid .van-grid-item .van-grid-item__content .video {
@@ -342,6 +344,15 @@
   left: 50%;
   transform: translate(-50%, -50%);
   width: .5rem;
+}
+
+.image-preview-dialog .van-image-preview__index {
+  width: 100%;
+  height: .44rem;
+  line-height: .44rem;
+  text-align: center;
+  top: 0;
+  background: rgba(0, 0, 0, 0.6);
 }
 
 .image-preview-mask {

@@ -2,7 +2,7 @@
  * @Author: 熊望
  * @Date: 2022-06-02 23:36:44
  * @LastEditors: 熊望
- * @LastEditTime: 2022-06-14 01:16:31
+ * @LastEditTime: 2022-06-15 22:25:01
  * @FilePath: /nginx/Users/bear/Desktop/H5AwakenApp/src/views/home.vue
  * @Description: 
 -->
@@ -48,7 +48,7 @@
           <van-image v-else :src="image.thumbnailUrl" @click="handlerPreview(i)" fit="cover" /> -->
           <van-image :src="image.thumbnailUrl" @click="handlerPreview(i)" fit="cover">
             <div v-if="image.type === 1">
-              <span v-if="isGird" class="duration">{{ image.duration || '00:00' }}</span>
+              <span v-if="isGird" class="duration">{{ formatDuration(image.videoDuration) }}</span>
               <img v-else class="play-btn" src="@/assets/image/play_btn.png" alt="" srcset="">
             </div>
           </van-image>
@@ -146,6 +146,8 @@ import { ref, computed, reactive } from 'vue';
 import { useStore } from 'vuex';
 // import { ImagePreview } from 'vant';
 
+const formatStr = s => `0${s || 0}`.slice(-2);
+
 export default {
     name: 'shareHome',
     setup() {
@@ -228,6 +230,13 @@ export default {
               return;
           }
           this.overlayVisible = true;
+      },
+      formatDuration(duration) {
+          duration = Number(duration) || 0;
+          const h = parseInt(duration / 3600);
+          const m = parseInt(duration % 3600 / 60);
+          const s = duration % 60;
+          return `${h && formatStr(h) || ''}${h && ':' || ''}${formatStr(m)}:${formatStr(s)}`;
       },
       getAddress() {
         const msg = window.location.href;
