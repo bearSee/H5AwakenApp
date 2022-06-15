@@ -101,6 +101,22 @@
           .van-image {
             height: 100%;
             width: 100%;
+            position: relative;
+            .play-btn {
+              width: .5rem;
+              position: absolute;
+              left: 50%;
+              top: 50%;
+              transform: translate(-50%, -50%);
+            }
+            .duration {
+              position: absolute;
+              right: .08rem;
+              bottom: .08rem;
+              font-size: .1rem;
+              color: #fff;
+              border-radius: .02rem;
+            }
           }
           .video {
             height: 100%;
@@ -199,6 +215,7 @@
     }
   }
   .overlay-dialog {
+    z-index: 5;
     img {
       width: 100%;
     }
@@ -214,11 +231,7 @@
     left: 0;
     right: 0;
     bottom: 0;
-    // background-image: url(./image/mask.png);
-    // background-position: center;
-    // background-repeat: no-repeat;
-    // background-size: cover;
-    z-index: 0;
+    z-index: 4;
     img {
       min-width: 100vw;
       height: 100vh;
@@ -229,11 +242,68 @@
     }
   }
 }
-.van-image-preview {
+.image-preview-dialog {
+  z-index: 3!important;
   .van-image-preview__close-icon {
     .van-icon__image {
       width: .14rem;
       height: .14rem;
     }
   }
+  .van-image-preview__cover {
+    position: fixed;
+    top: auto;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    height: 1.27rem;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end;
+    .origin-btn {
+      padding: .1rem .12rem;
+      height: .32rem;
+      line-height: .32rem;
+      background: #000000;
+      opacity: 0.7;
+      border-radius: .16rem;
+      margin: 0 auto;
+      font-size: 13px;
+      font-family: Adobe Heiti Std;
+      font-weight: normal;
+      color: #FFFFFF;
+      border: 0;
+    }
+    .operate-box {
+      background: rgba(0, 0, 0, .45);
+      height: .76rem;
+      display: flex;
+      justify-content: space-around;
+      .save-btn, .open-btn {
+        width: .65rem;
+        font-size: .13rem;
+        font-family: Adobe Heiti Std;
+        font-weight: normal;
+        color: #FFFFFF;
+        text-align: center;
+        margin: auto;
+        img {
+          width: .21rem;
+          margin: auto;
+          margin-bottom: .08rem;
+        }
+      }
+    }
+    .play-btn {
+      position: fixed;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      width: .5rem;
+    }
+  }
+}
+.image-preview-mask {
+  background: #000;
+  z-index: 2!important;
 }

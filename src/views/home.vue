@@ -16,7 +16,7 @@
           <div class="des-c">安全守护您的数据</div>
         </div>
       </div>
-      <van-button round  type="primary" size="mini" @click="handlerOpenApp">打开APP</van-button>
+      <van-button round  type="primary" size="mini" @click="handlerOpenApp(2)">打开APP</van-button>
     </div>
     <div class="home-body">
       <div class="user-info">
@@ -42,10 +42,16 @@
       </div>
       <van-grid v-if="images.length" square :gutter="1" :border="false" :column-num="isGird ? 3 : 1">
         <van-grid-item v-for="(image, i) in images" :key="image.id">
-          <video class="video" v-if="image.type === 1" controls :poster="image.thumbnailUrl">
+          <!-- <video class="video" v-if="image.type === 1" controls :poster="image.thumbnailUrl">
             <source :src="image.originUrl" type="video/mp4">
           </video>
-          <van-image v-else :src="image.thumbnailUrl" @click="handlerPreview(i)" fit="cover" />
+          <van-image v-else :src="image.thumbnailUrl" @click="handlerPreview(i)" fit="cover" /> -->
+          <van-image :src="image.thumbnailUrl" @click="handlerPreview(i)" fit="cover">
+            <div v-if="image.type === 1">
+              <span v-if="isGird" class="duration">{{ image.duration || '00:00' }}</span>
+              <img v-else class="play-btn" src="@/assets/image/play_btn.png" alt="" srcset="">
+            </div>
+          </van-image>
         </van-grid-item>
       </van-grid>
       <van-empty v-else :class="imageStatus" :image="require(`@/assets/image/${imageStatus === 'offline' ? '404' : 'empty'}.png`)" >
@@ -75,7 +81,7 @@
       <van-button
         class="save-app-btn"
         :icon="require('@/assets/image/btn_save.png')"
-        @click="handlerOpenApp">
+        @click="handlerOpenApp(1)">
         一键转存云存宝
       </van-button>
       
@@ -100,17 +106,45 @@
       <img src="@/assets/image/guide_content.png" alt="" srcset="">
       <img class="guide-btn" src="@/assets/image/guide_btn.png" alt="" srcset=""  @click="overlayVisible = false">
     </van-overlay>
-    <!-- <van-image-preview v-model:show="show" :images="images" @change="onChange">
-      <template v-slot:index>第{{ index }}页</template>
-    </van-image-preview> -->
+    <van-image-preview
+      class-name="image-preview-dialog"
+      overlay-class="image-preview-mask"
+      closeable
+      v-model:show="previewVisible"
+      :images="previewImages"
+      :start-position="previewStartPosition"
+      :close-icon="require(`@/assets/image/close.png`)"
+      @change="previewChange"
+      @close="currentImage = {}">
+      <template v-slot:cover>
+        <van-button
+          v-if="!currentImage.isOrigin && currentImage.type !== 1"
+          class="origin-btn"
+          round
+          @click="handlerViewOrigin">
+          查看原图（{{ ((currentImage.size || 0) / 1024 / 1024).toFixed(2) }}M）
+        </van-button>
+        <div class="operate-box">
+          <div class="save-btn" @click="handlerOpenApp(1)">
+            <img src="@/assets/image/btn_save.png" alt="" srcset="">
+            <div>转存</div>
+          </div>
+          <div class="open-btn" @click="handlerOpenApp(2)">
+            <img src="@/assets/image/applogo.png" alt="" srcset="">
+            <div>用APP查看</div>
+          </div>
+        </div>
+        <img v-if="currentImage.type === 1" class="play-btn" src="@/assets/image/play_btn.png" alt="" srcset="">
+      </template>
+    </van-image-preview>
     
   </div>
 </template>
 
 <script>
-import { ref, computed } from 'vue';
+import { ref, computed, reactive } from 'vue';
 import { useStore } from 'vuex';
-import { ImagePreview } from 'vant';
+// import { ImagePreview } from 'vant';
 
 export default {
     name: 'shareHome',
@@ -123,11 +157,13 @@ export default {
           userHeadImg: computed(() => state.userHeadImg),
           imageStatus: computed(() => state.imageStatus),
           images: computed(() => state.images),
-          // currentImage: reactive({}),
-          // previewVisible: ref(false),
           // 是否为宫格展示
           isGird: ref(true),
           overlayVisible: ref(false),
+          previewVisible: ref(false),
+          previewStartPosition: ref(0),
+          previewImages: computed(() => state.images.map(({ url, originUrl, isOrigin }) => isOrigin ? originUrl : url)),
+          currentImage: reactive({}),
           isWeixin: /MicroMessenger/i.test(ua),
           isAndroid: /Android|Adr/i.test(ua),
           isIOS: /iPhone|iPod|iPad/i.test(ua),
@@ -144,17 +180,25 @@ export default {
           if (this.isLogined) return;
           this.$router.push('/login');
       },
-      handlerPreview(i) {
-        // const images = JSON.parse(JSON.stringify(this.images)).map(({ url }) => url);
-          ImagePreview({
-              images: [this.images[i].url],
-              // startPosition,
-              closeable: true,
-              showIndex: false,
-              closeIcon: require(`@/assets/image/close.png`),
-          });
+      handlerPreview(index) {
+          this.previewStartPosition = index;
+          this.previewVisible = true;
+          this.currentImage = this.images[index] || {};
+          // const images = JSON.parse(JSON.stringify(this.images)).map(({ url }) => url);
+          // ImagePreview({
+          //     images,
+          //     startPosition: i,
+          //     closeable: true,
+          //     closeIcon: require(`@/assets/image/close.png`),
+          // });
       },
-      handlerOpenApp() {
+      previewChange(index) {
+          this.currentImage = this.images[index] || {};
+      },
+      handlerViewOrigin() {
+          if (this.currentImage.type !== 1) this.currentImage.isOrigin = true;
+      },
+      handlerOpenApp(openType) {
           if (!this.isWeixin && (this.isAndroid || this.isIOS)) {
               // Toast.loading({
               //     duration: 2000,
@@ -163,14 +207,15 @@ export default {
               // });
               const token = window.localStorage.getItem('token');
               const shareId = window.sessionStorage.getItem('shareId');
+              const { md5 = '' } = this.currentImage;
               const type = this.isAndroid ? 'android' : 'ios';
               const urlConfig = {
                   android: {
-                      openUrl: `myscheme://myhost:1024/main?key1=${shareId}&key2=${token}`,
+                      openUrl: `myscheme://myhost:1024/main?key1=${shareId}&key2=${token}&key3=${md5}&key4=${openType}`,
                       downloadUrl: 'https://hmd-down.oss-cn-hangzhou.aliyuncs.com/hificloud/android/release.apk',
                   },
                   ios: {
-                      openUrl: `https://share.hificloud.net/share?id=${shareId}&token=${token}.dde.1wx`,
+                      openUrl: `https://share.hificloud.net/share?id=${shareId}&token=${token}&key3=${md5}&key4=${openType}.dde.1wx`,
                       downloadUrl: 'https://apps.apple.com/cn/app/hificloud/id1543197598',
                   },
               };
