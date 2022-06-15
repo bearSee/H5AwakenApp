@@ -151,6 +151,7 @@ export default {
               // startPosition,
               closeable: true,
               showIndex: false,
+              closeIcon: require(`@/assets/image/close.png`),
           });
       },
       handlerOpenApp() {

@@ -135,7 +135,7 @@
   height: 1.5rem;
 }
 
-.share-page-home .home-body .van-empty.empty .van-empty__image {
+.share-page-home .home-body .van-empty.empty .van-empty__image, .share-page-home .home-body .van-empty.invalid .van-empty__image {
   width: 1.24rem;
   height: 1.11rem;
 }
@@ -253,4 +253,9 @@
   left: 50%;
   top: 50%;
   transform: translate(-50%, -50%);
+}
+
+.van-image-preview .van-image-preview__close-icon .van-icon__image {
+  width: .14rem;
+  height: .14rem;
 }
