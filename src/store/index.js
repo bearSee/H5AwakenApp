@@ -8,6 +8,7 @@
  */
 
 import { createStore } from 'vuex';
+import { Toast } from 'vant';
 import axios from '@/plugins/axios';
 import qs from 'qs';
 
@@ -59,7 +60,7 @@ export default createStore({
                 window.removeEventListener('popstate', listener);
                 history.replaceState(null, null, newUrl);
             } else {
-                history.pushState(null, null, newUrl);
+                history.replaceState(null, null, newUrl);
                 window.removeEventListener('popstate', listener);
                 window.addEventListener('popstate', listener);
             }
@@ -85,7 +86,10 @@ export default createStore({
         },
         getImageList({ commit }) {
             const shareId = window.sessionStorage.getItem('shareId');
-            if (!shareId) return;
+            if (!shareId) {
+                commit('setImageStatus', 'invalid');
+                return;
+            }
             axios.get(`${window._businessRoot}v1/share/media/list?id=${shareId}`).then((res) => {
                 const data = (((res && res.data || {}).data || {}).content || []).map(d => ({
                     ...d,
@@ -144,6 +148,8 @@ export default createStore({
                 }).then((res) => {
                     dispatch('loginSuccess', (res && res.data || {}).data);
                     resolve();
+                }).catch((err) => {
+                    Toast((err && err.data).message || '登录失败');
                 });
             });
         },

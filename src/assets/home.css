@@ -169,60 +169,18 @@
   margin-top: .11rem;
 }
 
-.share-page-home .home-body .my-swipe {
-  height: .85rem;
-  background: #f2f2f6;
-  border-radius: .1rem;
-  margin: .18rem .1rem;
+.share-page-home .home-body .show-more {
+  font-size: .15rem;
+  text-align: center;
+  color: #007AFF;
+  margin: .1rem auto;
 }
 
-.share-page-home .home-body .my-swipe .van-swipe-item {
-  display: flex;
-  justify-content: center;
-}
-
-.share-page-home .home-body .my-swipe .van-swipe-item .banner-box {
-  font-size: .24rem;
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-}
-
-.share-page-home .home-body .my-swipe .van-swipe-item .banner-box .box-title {
-  font-weight: 600;
-}
-
-.share-page-home .home-body .my-swipe .van-swipe-item .banner-box .box-content {
-  font-size: .13rem;
-  color: #aaa;
-  margin-top: .15rem;
-}
-
-.share-page-home .home-body .my-swipe .van-swipe-item .banner-box .box-content .box-btn {
-  font-size: .14rem;
-  margin-left: .1rem;
-  padding: .01rem .06rem;
-  padding-right: .1rem;
-  background: #007AFF;
-  color: #fff;
-  border-radius: .2rem;
-}
-
-.share-page-home .home-body .my-swipe .van-swipe-item .banner-box .box-content .box-btn::after {
-  content: '';
-  display: inline-block;
-  width: .07rem;
-  height: .07rem;
-  border: .01rem solid #fff;
-  border-width: .01rem .01rem 0 0;
-  transform: rotate(45deg);
-  position: relative;
-  top: -.01rem;
-  right: -.02rem;
-}
-
-.share-page-home .home-body .banner-image {
+.share-page-home .home-body .banner-swipe {
   margin: .44rem 0 0 0;
+}
+
+.share-page-home .home-body .banner-swipe .van-swipe-item img {
   width: 100%;
 }
 

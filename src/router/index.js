@@ -10,6 +10,11 @@ import { createRouter, createWebHashHistory } from 'vue-router';
 import store from '@/store';
 
 const { state, commit, dispatch } = store;
+const setURLStatic = (path) => {
+    setTimeout(() => {
+        commit('setURLStatic', path === '/login');
+    }, 500);
+};
 
 const routes = [
     // {
@@ -69,12 +74,9 @@ router.beforeEach(async (to, from, next) => {
         }
     }
 
-    await commit('setURLStatic', to.path === '/login');
+    setURLStatic(to.path);
+    // await commit('setURLStatic', to.path === '/login');
 
-    // if (to.path !== '/home' && state.isLogined) {
-    //     next('/home');
-    //     return;
-    // }
     if (state.isLogined && to.path === '/login') {
         return;
     }

@@ -41,7 +41,7 @@
         </div>
       </div>
       <van-grid v-if="images.length" square :gutter="1" :border="false" :column-num="isGird ? 3 : 1">
-        <van-grid-item v-for="(image, i) in images" :key="image.id">
+        <van-grid-item v-for="(image, i) in ((homeConfig.maxFileLength && homeConfig.maxFileLength > 0) ? images.slice(0, homeConfig.maxFileLength) : images)" :key="image.id">
           <!-- <video class="video" v-if="image.type === 1" controls :poster="image.thumbnailUrl">
             <source :src="image.originUrl" type="video/mp4">
           </video>
@@ -54,6 +54,12 @@
           </van-image>
         </van-grid-item>
       </van-grid>
+      <div
+        class="show-more"
+        v-if="homeConfig.maxFileLength && homeConfig.maxFileLength > 0 && images.length > homeConfig.maxFileLength"
+        @click="handlerOpenApp(2)">
+        查看更多
+      </div>
       <van-empty v-else :class="imageStatus" :image="require(`@/assets/image/${imageStatus === 'offline' ? '404' : 'empty'}.png`)" >
         <div class="tip-t">{{ ({
           offline: '设备离线',
@@ -66,18 +72,11 @@
           empty: '请稍后',
         })[imageStatus] }}</div>
       </van-empty>
-      <img class="banner-image" src="@/assets/image/banner.png" alt="" srcset="">
-      <!-- <van-swipe class="my-swipe" :autoplay="3000" indicator-color="white">
-        <van-swipe-item v-for="d in 1" :key="d">
-          <div class="banner-box">
-            <div class="box-title">使用云存宝分享</div>
-            <div class="box-content">
-              <span>速度\安全\快捷</span>
-              <span class="box-btn">享特惠</span>
-            </div>
-          </div>
+      <van-swipe class="banner-swipe" :autoplay="3000" indicator-color="white">
+        <van-swipe-item v-for="d in 4" :key="d">
+          <img class="banner-image" :src="require(`@/assets/image/banner-${d}.png`)" alt="" srcset="">
         </van-swipe-item>
-      </van-swipe> -->
+      </van-swipe>
       <van-button
         class="save-app-btn"
         :icon="require('@/assets/image/btn_save.png')"
@@ -152,6 +151,7 @@ export default {
       const { state, dispatch } = useStore();
       const ua = window.navigator.userAgent.toLowerCase();
       return {
+          homeConfig: reactive({}),
           isLogined: computed(() => state.isLogined),
           userInfo: computed(() => state.userInfo),
           userHeadImg: computed(() => state.userHeadImg),
@@ -238,11 +238,16 @@ export default {
       },
   },
   mounted() {
-      if (this.isWeixin) {
-          setTimeout(() => { this.getImages(); }, 800);
-          return;
-      }
+      // if (this.isWeixin) {
+      //     setTimeout(() => { this.getImages(); }, 800);
+      //     return;
+      // }
       this.getImages();
+      let { origin, pathname = '' } = window.location;
+      if (pathname[pathname.length - 1] !== '/') pathname = pathname.concat('/')
+      this.$http.get(`${origin}${pathname}config.json`).then((res) => {
+          this.homeConfig = ((res && res.data || {}).data || {}).home || {};
+      });
   },
 }
 </script>

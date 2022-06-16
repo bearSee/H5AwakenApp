@@ -105,7 +105,9 @@ export default {
           handlerLogin: (values) => {
               dispatch('handlerLogin', values).then(() => {
                   Toast('登录成功');
-                  router.push('/home');
+                  router.replace('/home');
+                  // const { origin, pathname } = window.location;
+                  // window.location.replace(`${origin}${pathname}?id=${window.sessionStorage.getItem('shareId')}`)
               });
           },
           wxAuthorization: () => {
@@ -140,8 +142,9 @@ export default {
                   }
                   this.timeout--;
               }, 1000);
-          }).catch(() => {
+          }).catch((err) => {
               setTimeout(Toast.clear, 1000);
+              Toast((err && err.data).message || '验证码发送失败');
           });
       },
       handlerSubmit({ auth, agreed, telephone }) {

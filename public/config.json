@@ -1,0 +1,8 @@
+{
+    "status": 200,
+    "data": {
+        "home": {
+            "maxFileLength": 9
+        }
+    }
+}
