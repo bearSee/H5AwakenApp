@@ -11,6 +11,7 @@
     height: .56rem;
     background: #F2F2F6;
     margin-top: .04rem;
+    border-top: .01rem solid #E0E0E3;
     .app-box {
       display: flex;
       img {
@@ -118,6 +119,27 @@
               font-family: PingFang SC;
               font-weight: bold;
               text-shadow: 0 .01rem .01rem rgba(143, 141, 141, 0.8);
+              z-index: 1;
+            }
+            .image-mask {
+              position: absolute;
+              width: 100%;
+              height: 100%;
+              z-index: 2;
+              left: 0;
+              top: 0;
+              background: #000;
+              opacity: .8;
+              color: #fff;
+              display: flex;
+              font-size: .4rem;
+              text-shadow: 0 .01rem .01rem rgba(25, 25, 25, 0.7);
+              &.is-gird {
+                font-size: .13rem;
+              }
+              span {
+                margin: auto;
+              }
             }
           }
           .video {
@@ -149,12 +171,6 @@
         }
       }
     }
-    .show-more {
-      font-size: .15rem;
-      text-align: center;
-      color: #007AFF;
-      margin: .1rem auto;
-    }
     .banner-swipe {
       margin: .44rem 0 0 0;
       .van-swipe-item {
@@ -176,6 +192,7 @@
       transform: translateX(-50%);
       font-size: .15rem;
       border: 0;
+      z-index: 2;
       .van-icon__image {
         width: .25rem;
       }

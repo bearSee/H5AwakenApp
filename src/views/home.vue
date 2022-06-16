@@ -41,7 +41,7 @@
         </div>
       </div>
       <van-grid v-if="images.length" square :gutter="1" :border="false" :column-num="isGird ? 3 : 1">
-        <van-grid-item v-for="(image, i) in ((homeConfig.maxFileLength && homeConfig.maxFileLength > 0) ? images.slice(0, homeConfig.maxFileLength) : images)" :key="image.id">
+        <van-grid-item v-for="(image, i) in (homeConfig.maxFileLength > 0 ? images.slice(0, homeConfig.maxFileLength) : images)" :key="image.id">
           <!-- <video class="video" v-if="image.type === 1" controls :poster="image.thumbnailUrl">
             <source :src="image.originUrl" type="video/mp4">
           </video>
@@ -51,15 +51,16 @@
               <span v-if="isGird" class="duration">{{ formatDuration(image.videoDuration) }}</span>
               <img v-else class="play-btn" src="@/assets/image/play_btn.png" alt="" srcset="">
             </div>
+            <div
+              class="image-mask"
+              :class="isGird && 'is-gird'"
+              v-if="homeConfig.maxFileLength > 0 && i >= (homeConfig.maxFileLength - 1)"
+              @click.stop="handlerOpenApp(2)">
+              <span>+ {{ images.length - homeConfig.maxFileLength }}</span>
+            </div>
           </van-image>
         </van-grid-item>
       </van-grid>
-      <div
-        class="show-more"
-        v-if="homeConfig.maxFileLength && homeConfig.maxFileLength > 0 && images.length > homeConfig.maxFileLength"
-        @click="handlerOpenApp(2)">
-        查看更多
-      </div>
       <van-empty v-else :class="imageStatus" :image="require(`@/assets/image/${imageStatus === 'offline' ? '404' : 'empty'}.png`)" >
         <div class="tip-t">{{ ({
           offline: '设备离线',
@@ -125,7 +126,7 @@
         </van-button>
         <div class="operate-box">
           <div class="save-btn" @click="handlerOpenApp(1)">
-            <img src="@/assets/image/btn_save.png" alt="" srcset="">
+            <img src="@/assets/image/btn_save_large.png" alt="" srcset="">
             <div>转存</div>
           </div>
           <div class="open-btn" @click="handlerOpenApp(2)">
