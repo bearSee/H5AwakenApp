@@ -85,14 +85,7 @@
         一键转存云存宝
       </van-button>
       
-      <!-- <van-button block @click="getAddress">
-        获取地址
-      </van-button>
-      <van-button block @click="clearStorage">
-        清除缓存，退出登录(测试)
-      </van-button>
-
-      <pre style="font-size: .1rem;">
+      <!-- <pre style="font-size: .1rem;">
         <code>
           {{ '\n' + JSON.stringify($store.state, null, 2) }}
         </code>
@@ -144,7 +137,6 @@
 <script>
 import { ref, computed, reactive } from 'vue';
 import { useStore } from 'vuex';
-// import { ImagePreview } from 'vant';
 
 const formatStr = s => `0${s || 0}`.slice(-2);
 
@@ -187,13 +179,6 @@ export default {
           this.previewStartPosition = index;
           this.previewVisible = true;
           this.currentImage = this.images[index] || {};
-          // const images = JSON.parse(JSON.stringify(this.images)).map(({ url }) => url);
-          // ImagePreview({
-          //     images,
-          //     startPosition: i,
-          //     closeable: true,
-          //     closeIcon: require(`@/assets/image/close.png`),
-          // });
       },
       previewChange(index) {
           this.currentImage = this.images[index] || {};
@@ -203,11 +188,6 @@ export default {
       },
       handlerOpenApp(openType) {
           if (!this.isWeixin && (this.isAndroid || this.isIOS)) {
-              // Toast.loading({
-              //     duration: 2000,
-              //     message: '加载中...',
-              //     forbidClick: true,
-              // });
               const token = window.localStorage.getItem('token');
               const shareId = window.sessionStorage.getItem('shareId');
               const { md5 = '' } = this.currentImage;
@@ -239,19 +219,8 @@ export default {
           const s = duration % 60;
           return `${h && formatStr(h) || ''}${h && ':' || ''}${formatStr(m)}:${formatStr(s)}`;
       },
-      getAddress() {
-        const msg = window.location.href;
-        alert(msg);
-      },
-      clearStorage() {
-        this.$store.commit('clearAuthorization');
-      },
   },
   mounted() {
-      // if (this.isWeixin) {
-      //     setTimeout(() => { this.getImages(); }, 800);
-      //     return;
-      // }
       this.getImages();
       let { origin, pathname = '' } = window.location;
       if (pathname[pathname.length - 1] !== '/') pathname = pathname.concat('/')
