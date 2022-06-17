@@ -41,6 +41,7 @@ const router = createRouter({
 
 router.beforeEach(async (to, from, next) => {
     if (!state.queryParams) await dispatch('getQueryParams');
+    if (!state.assetConfig) await dispatch('getAssetConfig');
 
     const wxCode = state.queryParams.code;
     

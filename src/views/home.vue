@@ -74,8 +74,8 @@
         })[imageStatus] }}</div>
       </van-empty>
       <van-swipe class="banner-swipe" :autoplay="3000" indicator-color="white">
-        <van-swipe-item v-for="d in 4" :key="d">
-          <img class="banner-image" :src="require(`@/assets/image/banner-${d}.png`)" alt="" srcset="">
+        <van-swipe-item v-for="banner in (homeConfig.bannerList || [])" :key="banner">
+          <img class="banner-image" :src="banner" alt="" srcset="">
         </van-swipe-item>
       </van-swipe>
       <van-button
@@ -93,7 +93,7 @@
 
     </div>
     <div class="mask-box" v-show="overlayVisible">
-      <img src="@/assets/image/mask.png" alt="" srcset="">
+      <img :src="homeConfig.open_app_mask || ''" alt="" srcset="">
     </div>
     <van-overlay class="overlay-dialog" :show="overlayVisible">
       <img src="@/assets/image/guide_content.png" alt="" srcset="">
@@ -146,7 +146,7 @@ export default {
       const { state, dispatch } = useStore();
       const ua = window.navigator.userAgent.toLowerCase();
       return {
-          homeConfig: reactive({}),
+          homeConfig: computed(() => (state.assetConfig || {}).home),
           isLogined: computed(() => state.isLogined),
           userInfo: computed(() => state.userInfo),
           userHeadImg: computed(() => state.userHeadImg),
@@ -222,11 +222,6 @@ export default {
   },
   mounted() {
       this.getImages();
-      let { origin, pathname = '' } = window.location;
-      if (pathname[pathname.length - 1] !== '/') pathname = pathname.concat('/')
-      this.$http.get(`${origin}${pathname}config.json`).then((res) => {
-          this.homeConfig = ((res && res.data || {}).data || {}).home || {};
-      });
   },
 }
 </script>

@@ -25,11 +25,15 @@ export default createStore({
         // empty/invalid/offline
         imageStatus: 'empty',
         images: [],
+        assetConfig: null,
     },
     getters: {},
     mutations: {
         setQueryParams(state, payload) {
-            state.queryParams = payload || null;
+            state.queryParams = payload || {};
+        },
+        setAssetConfig(state, payload) {
+            state.assetConfig = payload || {};
         },
         setLogined(state, payload) {
             state.isLogined = payload;
@@ -83,6 +87,15 @@ export default createStore({
             const queryParams = paramsString && qs.parse(paramsString) || {};
             if (queryParams.id) window.sessionStorage.setItem('shareId', queryParams.id);
             commit('setQueryParams', { ...queryParams, redirectPath: queryParams.state || '' });
+        },
+        getAssetConfig({ commit }) {
+            let { origin, pathname = '' } = window.location;
+            if (pathname[pathname.length - 1] !== '/') pathname = pathname.concat('/')
+            axios.get(`${origin}${pathname}assets/config.json`).then((res) => {
+                commit('setAssetConfig', (res && res.data || {}).data || {});
+            }).catch(() => {
+                commit('setAssetConfig', {});
+            });
         },
         getImageList({ commit }) {
             const shareId = window.sessionStorage.getItem('shareId');
