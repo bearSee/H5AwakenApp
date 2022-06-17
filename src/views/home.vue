@@ -111,7 +111,7 @@
       overlay-class="image-preview-mask"
       closeable
       v-model:show="previewVisible"
-      :images="previewImages"
+      :images="homeConfig.maxFileLength > 0 ? previewImages.slice(0, homeConfig.maxFileLength) : previewImages"
       :start-position="previewStartPosition"
       :close-icon="require(`@/assets/image/close.png`)"
       @change="previewChange"
