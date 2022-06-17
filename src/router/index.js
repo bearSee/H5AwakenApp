@@ -60,13 +60,11 @@ router.beforeEach(async (to, from, next) => {
         const iswxEnv = /MicroMessenger/i.test(window.navigator.userAgent.toLowerCase());
         if (!isLogined && !hastrywxlogin && iswxEnv) {
             await dispatch(wxCode ? 'wxLogin' : 'wxAuthorization', to.name);
-            if (!wxCode) {
-                await new Promise((r) => {
-                    setTimeout(() => { r(); }, 2000);
-                });
-                window.sessionStorage.setItem('hastrywxlogin', 'Y');
-                next('/home');
-            }
+            await new Promise((r) => {
+                setTimeout(() => { r(); }, 2000);
+            });
+            window.sessionStorage.setItem('hastrywxlogin', 'Y');
+            next('/home');
             return;
         }
     }

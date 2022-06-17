@@ -141,6 +141,13 @@
                 margin: auto;
               }
             }
+            img {
+              // min-width: 100%;
+              // min-height: 100%;
+              // width: auto;
+              // height: auto;
+              // object-fit: cover!important;
+            }
           }
           .video {
             height: 100%;
@@ -177,6 +184,9 @@
         img {
           width: 100%;
         }
+      }
+      .van-swipe__indicators {
+        bottom: .25rem;
       }
     }
     .save-app-btn {

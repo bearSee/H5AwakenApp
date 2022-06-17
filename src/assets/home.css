@@ -204,6 +204,10 @@
   width: 100%;
 }
 
+.share-page-home .home-body .banner-swipe .van-swipe__indicators {
+  bottom: .25rem;
+}
+
 .share-page-home .home-body .save-app-btn {
   width: 2.12rem;
   height: .46rem;
