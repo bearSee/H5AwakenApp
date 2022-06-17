@@ -146,7 +146,7 @@ export default {
       const { state, dispatch } = useStore();
       const ua = window.navigator.userAgent.toLowerCase();
       return {
-          homeConfig: computed(() => (state.assetConfig || {}).home),
+          homeConfig: computed(() => (state.assetConfig || {}).home || {}),
           isLogined: computed(() => state.isLogined),
           userInfo: computed(() => state.userInfo),
           userHeadImg: computed(() => state.userHeadImg),
