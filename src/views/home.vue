@@ -218,7 +218,7 @@ export default {
                       downloadUrl: 'https://hmd-down.oss-cn-hangzhou.aliyuncs.com/hificloud/android/release.apk',
                   },
                   ios: {
-                      openUrl: `https://share.hificloud.net/share?id=${shareId}&token=${token}&key3=${md5}&key4=${openType}.dde.1wx`,
+                      openUrl: `https://share.hificloud.net/open?id=${shareId}&token=${token}&key3=${md5}&key4=${openType}.dde.1wx`,
                       downloadUrl: 'https://apps.apple.com/cn/app/hificloud/id1543197598',
                   },
               };
