@@ -120,13 +120,21 @@
   padding: 0;
 }
 
-.share-page-home .home-body .van-grid .van-grid-item .van-grid-item__content .van-image {
+.share-page-home .home-body .van-grid .van-grid-item .van-grid-item__content .image-container, .share-page-home .home-body .van-grid .van-grid-item .van-grid-item__content .van-image {
   height: 100%;
   width: 100%;
   position: relative;
+  background-repeat: no-repeat;
+  background-size: cover;
 }
 
-.share-page-home .home-body .van-grid .van-grid-item .van-grid-item__content .van-image .play-btn {
+.share-page-home .home-body .van-grid .van-grid-item .van-grid-item__content .video {
+  height: 100%;
+  width: 100%;
+  object-fit: cover;
+}
+
+.share-page-home .home-body .van-grid .van-grid-item .van-grid-item__content .play-btn {
   width: .5rem;
   position: absolute;
   left: 50%;
@@ -134,7 +142,7 @@
   transform: translate(-50%, -50%);
 }
 
-.share-page-home .home-body .van-grid .van-grid-item .van-grid-item__content .van-image .duration {
+.share-page-home .home-body .van-grid .van-grid-item .van-grid-item__content .duration {
   position: absolute;
   right: .08rem;
   bottom: .08rem;
@@ -146,7 +154,7 @@
   z-index: 1;
 }
 
-.share-page-home .home-body .van-grid .van-grid-item .van-grid-item__content .van-image .image-mask {
+.share-page-home .home-body .van-grid .van-grid-item .van-grid-item__content .image-mask {
   position: absolute;
   width: 100%;
   height: 100%;
@@ -161,18 +169,12 @@
   text-shadow: 0 0.01rem 0.01rem rgba(25, 25, 25, 0.7);
 }
 
-.share-page-home .home-body .van-grid .van-grid-item .van-grid-item__content .van-image .image-mask.is-gird {
+.share-page-home .home-body .van-grid .van-grid-item .van-grid-item__content .image-mask.is-gird {
   font-size: .13rem;
 }
 
-.share-page-home .home-body .van-grid .van-grid-item .van-grid-item__content .van-image .image-mask span {
+.share-page-home .home-body .van-grid .van-grid-item .van-grid-item__content .image-mask span {
   margin: auto;
-}
-
-.share-page-home .home-body .van-grid .van-grid-item .van-grid-item__content .video {
-  height: 100%;
-  width: 100%;
-  object-fit: cover;
 }
 
 .share-page-home .home-body .van-empty .van-empty__image {

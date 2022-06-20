@@ -70,7 +70,6 @@ router.beforeEach(async (to, from, next) => {
     }
 
     setURLStatic(to.path);
-    // await commit('setURLStatic', to.path === '/login');
 
     if (state.isLogined && to.path === '/login') {
         return;

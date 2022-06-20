@@ -99,60 +99,55 @@
       .van-grid-item {
         .van-grid-item__content {
           padding: 0;
-          .van-image {
+          .image-container, .van-image {
             height: 100%;
             width: 100%;
             position: relative;
-            .play-btn {
-              width: .5rem;
-              position: absolute;
-              left: 50%;
-              top: 50%;
-              transform: translate(-50%, -50%);
-            }
-            .duration {
-              position: absolute;
-              right: .08rem;
-              bottom: .08rem;
-              font-size: .1rem;
-              color: #fff;
-              font-family: PingFang SC;
-              font-weight: bold;
-              text-shadow: 0 .01rem .01rem rgba(143, 141, 141, 0.8);
-              z-index: 1;
-            }
-            .image-mask {
-              position: absolute;
-              width: 100%;
-              height: 100%;
-              z-index: 2;
-              left: 0;
-              top: 0;
-              background: #000;
-              opacity: .8;
-              color: #fff;
-              display: flex;
-              font-size: .4rem;
-              text-shadow: 0 .01rem .01rem rgba(25, 25, 25, 0.7);
-              &.is-gird {
-                font-size: .13rem;
-              }
-              span {
-                margin: auto;
-              }
-            }
-            img {
-              // min-width: 100%;
-              // min-height: 100%;
-              // width: auto;
-              // height: auto;
-              // object-fit: cover!important;
-            }
+            background-repeat: no-repeat;
+            background-size: cover;
           }
           .video {
             height: 100%;
             width: 100%;
             object-fit: cover;
+          }
+          .play-btn {
+            width: .5rem;
+            position: absolute;
+            left: 50%;
+            top: 50%;
+            transform: translate(-50%, -50%);
+          }
+          .duration {
+            position: absolute;
+            right: .08rem;
+            bottom: .08rem;
+            font-size: .1rem;
+            color: #fff;
+            font-family: PingFang SC;
+            font-weight: bold;
+            text-shadow: 0 .01rem .01rem rgba(143, 141, 141, 0.8);
+            z-index: 1;
+          }
+          .image-mask {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            z-index: 2;
+            left: 0;
+            top: 0;
+            background: #000;
+            opacity: .8;
+            color: #fff;
+            display: flex;
+            font-size: .4rem;
+            text-shadow: 0 .01rem .01rem rgba(25, 25, 25, 0.7);
+            &.is-gird {
+              font-size: .13rem;
+            }
+            span {
+              margin: auto;
+            }
           }
         }
       }

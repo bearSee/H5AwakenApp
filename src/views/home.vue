@@ -46,7 +46,10 @@
             <source :src="image.originUrl" type="video/mp4">
           </video>
           <van-image v-else :src="image.thumbnailUrl" @click="handlerPreview(i)" fit="cover" /> -->
-          <van-image :src="image.thumbnailUrl" @click="handlerPreview(i)" fit="cover">
+          <div
+            class="image-container"
+            @click="handlerPreview(i)"
+            :style="`background-image: url(${image.thumbnailUrl})`">
             <div v-if="image.type === 1">
               <span v-if="isGird" class="duration">{{ formatDuration(image.videoDuration) }}</span>
               <img v-else class="play-btn" src="@/assets/image/play_btn.png" alt="" srcset="">
@@ -58,7 +61,7 @@
               @click.stop="handlerOpenApp(2)">
               <span>+ {{ images.length - homeConfig.maxFileLength }}</span>
             </div>
-          </van-image>
+          </div>
         </van-grid-item>
       </van-grid>
       <van-empty v-else :class="imageStatus" :image="require(`@/assets/image/${imageStatus === 'offline' ? '404' : 'empty'}.png`)" >
