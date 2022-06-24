@@ -4,12 +4,12 @@
         "home": {
             "maxFileLength": 9,
             "bannerList": [
-                "/assets/images/banner-1.png",
-                "/assets/images/banner-2.png",
-                "/assets/images/banner-3.png",
-                "/assets/images/banner-4.png"
+                "assets/images/banner-1.png",
+                "assets/images/banner-2.png",
+                "assets/images/banner-3.png",
+                "assets/images/banner-4.png"
             ],
-            "open_app_mask": "/assets/images/open_app_mask.png"
+            "open_app_mask": "assets/images/open_app_mask.png"
         }
     }
 }
