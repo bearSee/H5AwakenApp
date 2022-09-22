@@ -32,13 +32,15 @@
         }
       }
     }
-    .van-button {
+    .open-app {
       margin: auto 0;
-      width: .65rem;
-      height: .25rem;
-      background: #007AFF;
-      border-radius: .13rem;
-      text-align: center;
+      .camouflage-btn .van-button {
+        width: .65rem;
+        height: .25rem;
+        background: #007AFF;
+        border-radius: .13rem;
+        text-align: center;
+      }
     }
   }
   .home-body {
@@ -47,106 +49,225 @@
     padding-bottom: .8rem;
     overflow-x: hidden;
     overflow-y: auto;
-    .user-info {
-      display: flex;
-      justify-content: space-between;
-      font-size: .15rem;
-      padding: 0 .18rem;
-      .info {
-        color: #007AFF;
+    .file-content, .image-content {
+      .user-info {
         display: flex;
-        .van-image {
-          margin: auto 0;
-        }
-        .nickname {
-          margin: auto .12rem;
-        }
-      }
-      .operate {
-        display: flex;
-        .gird {
-          margin: auto .04rem;
-          width: .16rem;
-          height: .16rem;
-          position: relative;
-          top: -.01rem;
-        }
-        span {
-          margin: auto 0;
-        }
-      }
-    }
-    .photo-box {
-      padding: 0 .18rem;
-      font-size: .13rem;
-      margin-top: .24rem;
-      margin-bottom: .33rem;
-      .photo-t {
+        justify-content: space-between;
         font-size: .15rem;
-        color: #1A1A1A;
-        margin-bottom: .08rem;
-        font-weight: 600;
-      }
-      .photo-c {
-        color: #8F92A1;
-        .tip {
-          color: #FF0000;
-          margin-left: .06rem;
+        padding: 0 .18rem;
+        .avatar-info {
+          color: #007AFF;
+          display: flex;
+          .van-image {
+            margin: auto 0;
+          }
+          .nickname {
+            margin: auto .12rem;
+          }
         }
-      }
-    }
-    .van-grid {
-      .van-grid-item {
-        .van-grid-item__content {
-          padding: 0;
-          .image-container, .van-image {
-            height: 100%;
-            width: 100%;
-            position: relative;
-            background-repeat: no-repeat;
-            background-size: cover;
+        .operate-box {
+          display: flex;
+          .van-popover__wrapper {
+            margin: auto .2rem;
           }
-          .video {
-            height: 100%;
-            width: 100%;
-            object-fit: cover;
-          }
-          .play-btn {
-            width: .5rem;
-            position: absolute;
-            left: 50%;
-            top: 50%;
-            transform: translate(-50%, -50%);
-          }
-          .duration {
-            position: absolute;
-            right: .08rem;
-            bottom: .08rem;
-            font-size: .1rem;
-            color: #fff;
-            font-family: PingFang SC;
-            font-weight: bold;
-            text-shadow: 0 .01rem .01rem rgba(143, 141, 141, 0.8);
-            z-index: 1;
-          }
-          .image-mask {
-            position: absolute;
-            width: 100%;
-            height: 100%;
-            z-index: 2;
-            left: 0;
-            top: 0;
-            background: #000;
-            opacity: .8;
-            color: #fff;
+          .operate {
             display: flex;
-            font-size: .4rem;
-            text-shadow: 0 .01rem .01rem rgba(25, 25, 25, 0.7);
-            &.is-gird {
-              font-size: .13rem;
+            .oper-icon {
+              margin: auto .02rem;
+              width: .18rem;
+              height: .18rem;
+              position: relative;
+              top: -.01rem;
             }
             span {
-              margin: auto;
+              margin: auto 0;
+            }
+          }
+        }
+      }
+      .photo-box {
+        padding: 0 .18rem;
+        font-size: .13rem;
+        margin-top: .24rem;
+        margin-bottom: .33rem;
+        position: relative;
+        .photo-t {
+          font-size: .15rem;
+          color: #1A1A1A;
+          margin-bottom: .08rem;
+          font-weight: 600;
+        }
+        .photo-c {
+          color: #8F92A1;
+          .tip {
+            color: #FF0000;
+            margin-left: .06rem;
+          }
+        }
+        .back {
+          position: absolute;
+          right: .18rem;
+          bottom: 0;
+          color: #007AFF;
+        }
+      }
+    }
+    .file-content {
+      margin-bottom: .1rem;
+      .photo-box {
+        margin-bottom: .15rem;
+      }
+      .van-grid {
+        .van-grid-item {
+          .van-grid-item__content {
+            &:active {
+              background: #f8f8f8;
+            }
+            .describe-box {
+              font-family: PingFang SC;
+              display: flex;
+              flex-direction: column;
+              justify-content: center;
+              margin: auto 0;
+              position: relative;
+              .file-name {
+                font-size: .14rem;
+                font-weight: 500;
+                color: #000000;
+                line-height: .17rem;
+                overflow: hidden;
+                white-space: nowrap;
+                text-overflow: ellipsis;
+              }
+              .update-time {
+                color: #808080;
+                font-size: .11rem;
+                margin-top: .05rem;
+              }
+            }
+          }
+          &.is-list {
+            width: 100%;
+            .van-grid-item__content {
+              width: 100%;
+              box-sizing: border-box;
+              align-items: flex-start;
+              padding: .16rem .22rem;
+              border-bottom: .01rem solid #e6e6e6;
+              flex-direction: row;
+              justify-content: start;
+              &:active {
+                background: #f8f8f8;
+              }
+              .van-image {
+                width: .37rem;
+                height: .37rem;
+                margin-right: .1rem;
+              }
+              .describe-box {
+                width: calc(100% - .47rem);
+                .size {
+                  margin-left: .05rem;
+                }
+                .van-icon {
+                  position: absolute;
+                  right: 0;
+                  top: 50%;
+                  transform: translateY(-50%);
+                  font-size: .16rem;
+                  color: #A9AEBE;
+                }
+              }
+            }
+            &:nth-last-child(1) {
+              .van-grid-item__content {
+                border-bottom: 0;
+              }
+            }
+          }
+          &.is-gird {
+            .van-grid-item__content {
+              &:active {
+                background: #f8f8f8;
+              }
+              .van-image {
+                width: .61rem;
+                height: .61rem;
+                &.is-image {
+                  padding: .06rem;
+                }
+              }
+              .describe-box {
+                text-align: center;
+                margin-top: .12rem;
+                .update-time {
+                  .size {
+                    margin-top: .05rem;
+                    display: inline-block;
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+    .image-content {
+      margin-bottom: .44rem;
+      .van-grid {
+        .van-grid-item {
+          .van-grid-item__content {
+            padding: 0;
+            .image-container, .van-image {
+              height: 100%;
+              width: 100%;
+              position: relative;
+              background-repeat: no-repeat;
+              background-size: cover;
+              background-position: center;
+            }
+            .video {
+              height: 100%;
+              width: 100%;
+              object-fit: cover;
+            }
+            .play-btn {
+              width: .5rem;
+              position: absolute;
+              left: 50%;
+              top: 50%;
+              transform: translate(-50%, -50%);
+            }
+            .duration {
+              position: absolute;
+              right: .08rem;
+              bottom: .08rem;
+              font-size: .1rem;
+              color: #fff;
+              font-family: PingFang SC;
+              font-weight: bold;
+              text-shadow: 0 .01rem .01rem rgba(143, 141, 141, 0.8);
+              z-index: 1;
+            }
+            .image-mask {
+              position: absolute;
+              width: 100%;
+              height: 100%;
+              z-index: 2;
+              left: 0;
+              top: 0;
+              background: #000;
+              opacity: .8;
+              color: #fff;
+              display: flex;
+              font-size: .4rem;
+              text-shadow: 0 .01rem .01rem rgba(25, 25, 25, 0.7);
+              &.is-gird {
+                font-size: .13rem;
+              }
+              span {
+                margin: auto;
+              }
             }
           }
         }
@@ -154,13 +275,18 @@
     }
     .van-empty {
       .van-empty__image {
-        width: 3rem;
-        height: 1.5rem;
+        transition: .1s;
       }
-      &.empty, &.invalid {
+      &.empty, &.loading, &.invalid {
         .van-empty__image {
           width: 1.24rem;
           height: 1.11rem;
+        }
+      }
+      &.offline {
+        .van-empty__image {
+          width: 3rem;
+          height: 1.5rem;
         }
       }
       .van-empty__bottom {
@@ -174,7 +300,6 @@
       }
     }
     .banner-swipe {
-      margin: .44rem 0 0 0;
       .van-swipe-item {
         img {
           width: 100%;
@@ -184,55 +309,32 @@
         bottom: .25rem;
       }
     }
-    .save-app-btn {
+    .save-app-box {
       width: 2.12rem;
       height: .46rem;
-      color: #fff;
-      background: #007AFF;
-      border-radius: .23rem;
       position: fixed;
       bottom: .22rem;
       left: 50%;
-      z-index: 1;
       transform: translateX(-50%);
       font-size: .15rem;
-      border: 0;
       z-index: 2;
-      .van-icon__image {
-        width: .25rem;
+      .save-app-btn {
+        width: 100%;
+        height: 100%;
+        background: #007AFF;
+        color: #fff;
+        border-radius: .23rem;
+        border: 0;
+        z-index: 1;
+        .van-icon__image {
+          width: .25rem;
+        }
       }
-    }
-  }
-  .overlay-dialog {
-    z-index: 5;
-    img {
-      width: 100%;
-    }
-    .guide-btn {
-      width: 1rem;
-      display: flex;
-      margin: 0 auto;
-    }
-  }
-  .mask-box {
-    position: fixed;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    z-index: 4;
-    img {
-      min-width: 100vw;
-      height: 100vh;
-      position: absolute;
-      left: 50%;
-      top: 50%;
-      transform: translate(-50%, -50%);
     }
   }
 }
 .image-preview-dialog {
-  z-index: 3!important;
+  z-index: 33!important;
   .van-image-preview__close-icon {
     .van-icon__image {
       width: .14rem;
@@ -276,6 +378,9 @@
         color: #FFFFFF;
         text-align: center;
         margin: auto;
+        .camouflage-btn {
+          flex-direction: column;
+        }
         img {
           width: .21rem;
           margin: auto;
@@ -303,4 +408,16 @@
 .image-preview-mask {
   background: #000;
   z-index: 2!important;
+}
+.filter-popover {
+  .van-icon {
+    font-size: .16rem;
+    margin-right: .1rem;
+  }
+  .ac-empty {
+    display: inline-block;
+    width: .16rem;
+    height: .16rem;
+    margin-right: .1rem;
+  }
 }

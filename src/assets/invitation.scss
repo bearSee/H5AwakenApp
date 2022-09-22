@@ -1,0 +1,106 @@
+.invitation-page {
+  background: #f2f2f6;
+  font-family: Adobe Heiti Std;
+  height: 100vh;
+  overflow: hidden;
+  font-size: .13rem;
+  font-weight: normal;
+  color: #8F92A1;
+  padding: .3rem .28rem;
+  .invitation-head {
+    font-size: .21rem;
+    font-weight: 400;
+    color: #000000;
+    text-align: center;
+    .avatar {
+      width: .5rem;
+      height: .5rem;
+    }
+    .name {
+      margin: .1rem 0;
+      font-size: .16rem;
+      color: #333;
+      font-weight: 600;
+    }
+    .title {
+      font-size: .13rem;
+      color: #333;
+      margin-top: .14rem;
+    }
+  }
+  .van-form {
+    margin-top: .28rem;
+    .van-cell-group {
+      background: #f2f2f6;
+      margin: 0;
+      .van-cell {
+        padding: .14rem 0;
+        margin-top: .08rem;
+        background: #f2f2f6;
+        .verification-code-btn {
+          background: transparent;
+          color: #007AFF;
+          border: 0;
+          margin-left: .15rem;
+        }
+        &.is-border {
+          border-bottom: .01rem solid #d9d9d9;
+        }
+        &::after {
+          display: none;
+        }
+      }
+    }
+  }
+  .submit-box {
+    margin-top: .4rem;
+    .van-button {
+      height: .46rem;
+      background: #007AFF;
+      opacity: 0.7;
+      border-radius: .1rem;
+      font-size: .15rem;
+      font-family: SimHei;
+      font-weight: 400;
+      color: #FFFFFF;
+    }
+  }
+  .invitation-tips {
+    margin-top: .5rem;
+    .tip-t {
+      color: #000;
+      font-size: .16rem;
+      font-weight: 600;
+      text-align: center;
+      margin-bottom: .2rem;
+    }
+    .tip-c {
+      text-align: center;
+      margin-bottom: .06rem;
+      color: #999;
+    }
+    .success, .aready-success, .invalid {
+      color: #07C160;
+      font-size: .8rem;
+      display: flex;
+      margin-bottom: .2rem;
+      .van-icon {
+        margin: auto;
+      }
+    }
+    .aready-success {
+      color: #C8C9CC;
+    }
+    .invalid {
+      color: #FAAB0C;
+    }
+  }
+  .bot-tip {
+    position: absolute;
+    bottom: .25rem;
+    left: 50%;
+    transform: translateX(-50%);
+    color: #666;
+    font-size: .12rem;
+  }
+}

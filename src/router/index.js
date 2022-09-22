@@ -27,6 +27,14 @@ const routes = [
         name: 'home',
         component: () => import('@/views/home'),
     },
+    {
+        path: '/invitation',
+        name: 'invitation',
+        component: () => import('@/views/invitation'),
+        meta: {
+            authority: false,
+        },
+    },
 ]
 
 const router = createRouter({
@@ -39,6 +47,10 @@ router.beforeEach(async (to, from, next) => {
     if (!state.queryParams) await dispatch('getQueryParams');
     if (!state.assetConfig) await dispatch('getAssetConfig');
 
+    if (to.meta && to.meta.authority === false) {
+        next();
+        return;
+    }
     const wxCode = state.queryParams.code;
     
     if (!state.isLogined) {

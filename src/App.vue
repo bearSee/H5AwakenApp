@@ -8,11 +8,25 @@
 -->
 <template>
   <router-view></router-view>
+  <app-guide-mask />
 </template>
 
 <script>
+import { useStore } from 'vuex';
+import appGuideMask from '@/components/app-guide-mask';
+
 export default {
     name: 'App',
+    components: { appGuideMask },
+    setup() {
+        const { dispatch } = useStore();
+        return {
+            getSignature: () => dispatch('getSignature'),
+        };
+    },
+    created() {
+        this.getSignature();
+    },
 }
 </script>
 

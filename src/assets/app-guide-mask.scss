@@ -1,0 +1,32 @@
+.app-guide-mask {
+  .overlay-dialog {
+    z-index: 2023;
+    position: fixed;
+    top: 0;
+    left: 0;
+    img {
+      width: 100%;
+    }
+    .guide-btn {
+      width: 1rem;
+      display: flex;
+      margin: 0 auto;
+    }
+  }
+  .mask-box {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    z-index: 2022;
+    img {
+      min-width: 100vw;
+      height: 100vh;
+      position: absolute;
+      left: 50%;
+      top: 50%;
+      transform: translate(-50%, -50%);
+    }
+  }
+}

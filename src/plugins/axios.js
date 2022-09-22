@@ -12,7 +12,7 @@ import { Toast } from 'vant';
 
 // const root = `${window.location.protocol}//${window.location.host}`;
 const baseRoot = 'https://api.hificloud.net/';
-const businessRoot = 'http://agent.hificloud.net:8084/';
+const businessRoot = 'https://agent.hificloud.net/';
 
 const axiosConfig = {
     baseURL: `${baseRoot}v1/`,
