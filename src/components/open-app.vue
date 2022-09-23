@@ -94,7 +94,7 @@ export default {
             const type = this.isAndroid ? 'android' : 'ios';
             const urlConfig = {
                 android: {
-                    openUrl: `myscheme://myhost:1024/main?${params}`,
+                    openUrl: `hfc://com.hificloud:1024/HiSchemeActivity?${params}`,
                     downloadUrl: 'https://hmd-down.oss-cn-hangzhou.aliyuncs.com/hificloud/android/release.apk',
                 },
                 ios: {
