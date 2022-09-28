@@ -35,7 +35,7 @@
               :class="isGird && 'is-gird'"
               :params="{ openType: componentTag }"
               v-if="homeConfig.maxFileLength > 0 && images.length > homeConfig.maxFileLength && i >= (homeConfig.maxFileLength - 1)">
-              <span>+ {{ images.length }}</span>
+              <span>+ {{ images.length - homeConfig.maxFileLength + 1 }}</span>
             </open-app>
           </div>
         </van-grid-item>
@@ -45,7 +45,7 @@
         overlay-class="image-preview-mask"
         closeable
         v-model:show="previewVisible"
-        :images="homeConfig.maxFileLength > 0 ? previewImages.slice(0, homeConfig.maxFileLength) : previewImages"
+        :images="homeConfig.maxFileLength > 0 ? previewImages.slice(0, homeConfig.maxFileLength - 1) : previewImages"
         :start-position="previewStartPosition"
         :close-icon="require(`@/assets/image/close.png`)"
         @change="previewChange"
@@ -106,6 +106,7 @@ export default {
   },
   methods: {
       handlerPreview(index) {
+          if (index + 1 >= this.homeConfig.maxFileLength) return;
           this.previewStartPosition = index;
           this.previewVisible = true;
           this.currentImage = this.images[index] || {};

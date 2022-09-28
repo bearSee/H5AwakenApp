@@ -78,8 +78,8 @@ export default createStore({
         setOverlayVisible(state, payload) {
             state.overlayVisible = payload || false;
         },
-        setURLStatic(state, canback) {
-            const host = window.location.href.split('?')[0];
+        setURLStatic(state, path) {
+            const host = `${(window.location.href.split('?')[0] || '').split('#')[0]}#${path}`;
             const nickname = (state.userInfo.wechat || {}).nickname || state.userInfo.nickname || '';
             const newUrl = `${host}?${qs.stringify({
                 id: window.sessionStorage.getItem('shareId'),
@@ -88,14 +88,9 @@ export default createStore({
                 inviteCode: state.queryParams.inviteCode || '',
                 key: state.queryParams.key || '',
             })}`;
-            if (canback) {
-                window.removeEventListener('popstate', listener);
-                history.replaceState(null, null, newUrl);
-            } else {
-                history.replaceState(null, null, newUrl);
-                window.removeEventListener('popstate', listener);
-                window.addEventListener('popstate', listener);
-            }
+            history.replaceState(null, null, newUrl);
+            window.removeEventListener('popstate', listener);
+            window.addEventListener('popstate', listener);
         },
         clearAuthorization(state) {
             state.queryParams = {
@@ -187,6 +182,7 @@ export default createStore({
                         };
                     })
                     commit('setFiles', files);
+                    commit('setShareStatus', 'empty');
                     /**
                         "content": [
                             {
@@ -243,6 +239,7 @@ export default createStore({
                     originUrl: `${window._businessRoot}${deviceId}/anonymous/image?${qs.stringify({ uid, md5: d.md5, imgType: 0 })}`,
                 }));
                 commit('setImages', data);
+                commit('setShareStatus', 'empty');
             });
         },
         getSignature({ dispatch }) {
@@ -274,7 +271,8 @@ export default createStore({
             // 如签名过期导致验证失败，具体错误信息可以打开 config 的debug模式查看
             // 也可以在返回的 res 参数中查看，对于 SPA 可以在这里更新签名
             wx.error(function (err) {
-                Toast(err.message || 'wx.config注入配置失败');
+                // Toast(err.message || 'wx.config注入配置失败');
+                console.log(err.message || 'wx.config注入配置失败');
                 commit('setSignatured', false);
             });
         },
@@ -286,7 +284,7 @@ export default createStore({
         wxAuthorization({ state }, path) {
             if (!/MicroMessenger/i.test(window.navigator.userAgent.toLowerCase())) return;
             const url = 'https://open.weixin.qq.com/connect/oauth2/authorize';
-            const redirect_uri = (window.location.href.split('?')[0] || '').split('#/')[0];
+            const redirect_uri = `${(window.location.href.split('?')[0] || '').split('#')[0]}#/login`;
             const response_type = 'code';
             const scope = 'snsapi_userinfo';
             const newUrl = `${url}?${qs.stringify({
@@ -298,17 +296,15 @@ export default createStore({
             })}#wechat_redirect`;
             window.location.replace(newUrl);
         },
-        wxLogin({ state, commit, dispatch }) {
+        wxLogin({ state, dispatch }) {
             const { code } = state.queryParams || {};
-            window.sessionStorage.setItem('hastrywxlogin', 'Y');
-            axios.post('/web/wechat/login', { code }).then((res) => {
-                const data = (res && res.data || {}).data;
-                dispatch('loginSuccess', data);
-            }).catch(async (err) => {
-                if (String((err && err.data || {}).status) === '1805') {
-                    await commit('clearAuthorization');
-                    dispatch('wxAuthorization');
-                }
+            return new Promise((resolve, reject) => {
+                axios.post('/web/wechat/login', { code }).then((res) => {
+                    const data = (res && res.data || {}).data;
+                    dispatch('loginSuccess', data);
+                    Toast('微信快捷登录成功');
+                    resolve(res);
+                }).catch(reject);
             });
         },
         handlerLogin({ state, dispatch }, payload) {

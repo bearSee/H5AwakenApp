@@ -9,7 +9,7 @@
 <template>
   <div class="share-page-login">
     <div class="login-head">
-      <div v-if="isWechat" class="wechat-box">
+      <div v-if="wxCode" class="wechat-box">
         <img src="@/assets/image/applogo.png" alt="" srcset="">
         <div class="dots">
           <span></span>
@@ -18,7 +18,7 @@
         </div>
         <img src="@/assets/image/wechat.png" alt="" srcset="">
       </div>
-      <div class="title">{{ isWechat ? '请登录云存宝账号，绑定微信' : '欢迎登录' }}</div>
+      <div class="title">{{ wxCode ? '请登录云存宝账号，绑定微信' : '欢迎登录' }}</div>
       <div class="des">新用户登录后将自动创建帐号</div>
     </div>
       <van-form @submit="handlerSubmit">
@@ -69,7 +69,7 @@
           </van-button>
         </div>
       </van-form>
-      <div class="wx-login-box" v-if="isWeixinEnv && !isWechat">
+      <div class="wx-login-box" v-if="isWeixinEnv && !wxCode">
         <div>微信登录</div>
         <img src="@/assets/image/wechat.png" @click="wxAuthorization" alt="" srcset="">
       </div>
@@ -82,7 +82,7 @@
 </template>
 
 <script>
-import { ref } from 'vue';
+import { ref, computed } from 'vue';
 import { useRouter } from 'vue-router';
 import { useStore } from 'vuex';
 import { Toast } from 'vant';
@@ -97,7 +97,7 @@ export default {
       const ua = window.navigator.userAgent.toLowerCase();
       return {
           isWeixinEnv: /MicroMessenger/i.test(ua),
-          isWechat: ref(!!state.queryParams.code),
+          wxCode: computed(() => state.queryParams.code),
           agreed: ref(false),
           telephone: ref(''),
           auth: ref(''),
@@ -106,12 +106,18 @@ export default {
               dispatch('handlerLogin', values).then(() => {
                   Toast('登录成功');
                   router.replace('/home');
+                  if (state.queryParams.code) window.location.reload();
                   // const { origin, pathname } = window.location;
                   // window.location.replace(`${origin}${pathname}?id=${window.sessionStorage.getItem('shareId')}`)
               });
           },
           wxAuthorization: () => {
               dispatch('wxAuthorization', 'login');
+          },
+          wxLogin: () => dispatch('wxLogin'),
+          loginIn: () => {
+              router.replace('/home');
+              if (state.queryParams.code) window.location.reload();
           },
       };
   },
@@ -166,6 +172,13 @@ export default {
           }
           this.handlerLogin({ auth, telephone });
       },
+  },
+  created() {
+      if (this.isWeixinEnv && this.wxCode) {
+          this.wxLogin().then(this.loginIn).catch(() => {
+              // Toast((err && err.data).message || '快捷登录失败');
+          });
+      }
   },
 }
 </script>

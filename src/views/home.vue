@@ -77,7 +77,7 @@ export default {
       const { state, dispatch } = useStore();
       return {
           homeConfig: computed(() => (state.assetConfig || {}).home || {}),
-          isEmpty: computed(() => !((state.files || {}).content || []).length && !state.images.length),
+          isEmpty: computed(() => !state.shareInfo.tag || (!state.images.length && state.shareInfo.tag === 'ONLY_READ_ALBUM')),
           componentTag: computed(() => state.shareInfo.tag),
           shareStatus: computed(() => state.shareStatus),
           getShareInfo: () => {

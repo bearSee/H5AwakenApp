@@ -11,7 +11,7 @@
               </div>
             </template>
             <template #action="{ action }">
-                <van-icon v-if="action.code === currentFilter.code" name="success" />
+                <van-icon v-if="action.code === filterCode" name="success" />
                 <span v-else class="ac-empty"></span>
                 <span class="ac-name">{{ action.text }}</span>
             </template>
@@ -25,24 +25,32 @@
       <div class="photo-box">
         <div class="photo-t">文件分享</div>
         <div class="photo-c">
-          <span>共 {{ classifyCount[2] || 0 }} 个文件夹，{{ classifyCount[1] || 0 }} 个文件</span>
+          <span>共 {{ classifyCount['fileType_2'] || 0 }} 个文件夹，{{ classifyCount['fileType_1'] || 0 }} 个文件</span>
         </div>
         <span class="back" v-if="pathHistory.length > 1" @click="handlerBack"><van-icon name="arrow-left" /> 返回上一级</span>
       </div>
-      <van-grid :border="false" :column-num="isGird ? 3 : 1">
-        <van-grid-item v-for="file in files.content || []" :key="file.id" :class="isGird ? 'is-gird' : 'is-list'" @click="handlerViewDetail(file)">
-          <van-image
-            fit="cover"
-            :class="{ 'is-image': !!file.thumbnailUrl }"
-            :src="file.thumbnailUrl || require(`@/assets/image/${file.fileType === 2 ? 'file_folder' : 'file_default'}.png`)" />
-          <div class="describe-box">
-            <div class="file-name">{{ isGird ? file.girdShootName : file.shootName }}</div>
-            <div class="update-time"><span class="time">{{ formatDate(new Date(file.modifyTime), 'YYYY-MM-DD hh:mm') }}</span> <span class="size">{{ file.size ? `${(file.size / 1024 / 1024).toFixed(2)}M` : '' }}</span></div>
-            <van-icon v-if="!isGird && file.fileType === 2" name="arrow" />
-          </div>
-        </van-grid-item>
-      </van-grid>
-      <div class="tip-box van-list__finished-text">{{ isFinished ? '没有更多了' : (isLoading ? '正在加载...' : '上拉加载更多') }}</div>
+      <template v-if="(files.content || []).length">
+        <van-grid :border="false" :column-num="isGird ? 3 : 1">
+          <van-grid-item v-for="file in files.content || []" :key="file.id" :class="isGird ? 'is-gird' : 'is-list'" @click="handlerViewDetail(file)">
+            <div
+              v-if="file.thumbnailUrl"
+              class="image-container"
+              :style="`background-image: url(${file.thumbnailUrl})`">
+            </div>
+            <van-image
+              v-else
+              fit="cover"
+              :src="require(`@/assets/image/${file.fileType === 2 ? 'file_folder' : 'file_default'}.png`)" />
+            <div class="describe-box">
+              <div class="file-name">{{ isGird ? file.girdShootName : file.shootName }}</div>
+              <div class="update-time"><span class="time">{{ formatDate(new Date(file.modifyTime), 'YYYY-MM-DD hh:mm') }}</span> <span class="size">{{ file.size ? `${(file.size / 1024 / 1024).toFixed(2)}M` : '' }}</span></div>
+              <van-icon v-if="!isGird && file.fileType === 2" name="arrow" />
+            </div>
+          </van-grid-item>
+        </van-grid>
+        <div class="tip-box van-list__finished-text">{{ isFinished ? '没有更多了' : (isLoading ? '正在加载...' : '上拉加载更多') }}</div>
+      </template>
+      <van-empty v-else class="empty" :image="require(`@/assets/image/empty.png`)" description="暂无内容" />
       <van-dialog class="preview-dialog-tip" title="提示" v-model:show="visible" :show-confirm-button="false">
         <div class="van-dialog__message van-dialog__message--has-title">分享文件不支持在线预览方式，请打开APP浏览</div>
         <open-app class="van-hairline--top van-dialog__footer" :params="{ openType: componentTag }" @handler-comfirm="visible = false">
@@ -89,7 +97,7 @@ export default {
             { text: '时间', code: 'md' },
             { text: '大小', code: 'sd' },
           ],
-          currentFilter: { text: '名称', code: 'zd' },
+          filterCode: ref('zd'),
           getFiles: params => dispatch('getFiles', params),
           formatDate,
       };
@@ -98,14 +106,14 @@ export default {
         params() {
             return {
                 path: this.pathHistory[this.pathHistory.length - 1],
-                sort: this.currentFilter.code,
+                sort: this.filterCode,
                 range: `${this.page},${this.pageSize}`,
             };
         },
     },
     methods: {
-        handlerFilter(filter) {
-            this.currentFilter = filter;
+        handlerFilter({ code }) {
+            this.filterCode = code;
             this.handlerLoadFiles();
         },
         handlerViewDetail({ fileType, path }) {

@@ -10,13 +10,12 @@ import { createRouter, createWebHashHistory } from 'vue-router';
 import store from '@/store';
 
 const { state, commit, dispatch } = store;
-const setURLStatic = (path) => {
-    setTimeout(() => {
-        commit('setURLStatic', path === '/login');
-    }, 500);
-};
 
 const routes = [
+    {
+        path: '/',
+        redirect: '/login',
+    },
     {
         path: '/login',
         name: 'login',
@@ -51,53 +50,43 @@ router.beforeEach(async (to, from, next) => {
         next();
         return;
     }
-    const wxCode = state.queryParams.code;
     
     if (!state.isLogined) {
         const historyInfo = window.localStorage.getItem('userInfo');
-        let isLogined = false;
         // 从url参数判断是否已经登录
         if (state.queryParams.token) {
-            isLogined = await dispatch('checkLoginStatus', state.queryParams);
+            await dispatch('checkLoginStatus', state.queryParams);
         } else if (historyInfo) {
             // 从本地存储判断是否已经登录
             try {
-                isLogined = await dispatch('checkLoginStatus', JSON.parse(historyInfo));
+                await dispatch('checkLoginStatus', JSON.parse(historyInfo));
             } catch (error) {
                 console.error(error);
             }
         }
-
-        const hastrywxlogin = window.sessionStorage.getItem('hastrywxlogin') === 'Y';
-        const iswxEnv = /MicroMessenger/i.test(window.navigator.userAgent.toLowerCase());
-        if (!isLogined && !hastrywxlogin && iswxEnv) {
-            await dispatch(wxCode ? 'wxLogin' : 'wxAuthorization', to.name);
-            await new Promise((r) => {
-                setTimeout(() => { r(); }, 2000);
-            });
-            window.sessionStorage.setItem('hastrywxlogin', 'Y');
-            next('/home');
-            return;
-        }
     }
 
-    setURLStatic(to.path);
 
     if (state.isLogined && to.path === '/login') {
+        next('/home');
+        setTimeout(() => { commit('setURLStatic', '/home'); }, 500);
         return;
     }
     
     if (!['/home', '/login'].includes(to.path)) {
         next('/home');
+        setTimeout(() => { commit('setURLStatic', '/home'); }, 500);
         return;
     }
 
     if ((state.queryParams || {}).redirectPath && (state.queryParams || {}).redirectPath !== to.name) {
         next(`/${state.queryParams.redirectPath}`);
+        setTimeout(() => { commit('setURLStatic', `/${state.queryParams.redirectPath}`); }, 500);
         return;
     }
 
     next();
+    setTimeout(() => { commit('setURLStatic', to.path); }, 500);
 });
 
 export default router;
