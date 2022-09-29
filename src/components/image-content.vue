@@ -12,7 +12,7 @@
       <div class="photo-box">
         <div class="photo-t">照片合集</div>
         <div class="photo-c">
-          <span>共 {{ images.length || 0 }} 张照片</span>
+          <span>共 {{ classifyCount.image }} 张照片，{{ classifyCount.video }} 个视频</span>
         </div>
       </div>
       <van-grid v-if="images.length" :square="isGird" :gutter="1" :border="false" :column-num="isGird ? 3 : 1">
@@ -102,6 +102,13 @@ export default {
           previewStartPosition: ref(0),
           previewImages: computed(() => state.images.map(({ url, originUrl, isOrigin }) => isOrigin ? originUrl : url)),
           currentImage: reactive({}),
+          classifyCount: computed(() => {
+            const videoCount = state.images.filter(({ type }) => type === 1).length;
+              return {
+                  video: videoCount,
+                  image: state.images.length - videoCount,
+              }
+          }),
       };
   },
   methods: {
