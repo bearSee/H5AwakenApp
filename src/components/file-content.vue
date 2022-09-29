@@ -35,7 +35,8 @@
             <div
               v-if="file.thumbnailUrl"
               class="image-container"
-              :style="`background-image: url(${file.thumbnailUrl})`">
+              :style="`background-image: url(${require(`@/assets/image/no_pic.png`)})`">
+              <div class="image-div" :style="`background-image: url(${file.thumbnailUrl});`"></div>
             </div>
             <van-image
               v-else
@@ -43,7 +44,7 @@
               :src="require(`@/assets/image/${file.fileType === 2 ? 'file_folder' : 'file_default'}.png`)" />
             <div class="describe-box">
               <div class="file-name">{{ isGird ? file.girdShootName : file.shootName }}</div>
-              <div class="update-time"><span class="time">{{ formatDate(new Date(file.modifyTime), 'YYYY-MM-DD hh:mm') }}</span> <span class="size">{{ file.size ? `${(file.size / 1024 / 1024).toFixed(2)}M` : '' }}</span></div>
+              <div class="update-time"><span class="time">{{ formatDate(new Date(file.modifyTime), 'YYYY-MM-DD hh:mm') }}</span> <span class="size">{{ file.size && file.fileType !== 2 ? `${(file.size / 1024 / 1024).toFixed(2)}M` : '' }}</span></div>
               <van-icon v-if="!isGird && file.fileType === 2" name="arrow" />
             </div>
           </van-grid-item>

@@ -176,6 +176,19 @@
   background-repeat: no-repeat;
   background-size: cover;
   background-position: center;
+  position: relative;
+}
+
+.share-page-home .home-body .file-content .van-grid .van-grid-item .van-grid-item__content .image-container .image-div {
+  width: 100%;
+  height: 100%;
+  background-repeat: no-repeat;
+  background-size: cover;
+  background-position: center;
+  position: absolute;
+  z-index: 1;
+  left: 0;
+  top: 0;
 }
 
 .share-page-home .home-body .file-content .van-grid .van-grid-item.is-list {
@@ -239,6 +252,7 @@
 .share-page-home .home-body .file-content .van-grid .van-grid-item.is-gird .van-grid-item__content .describe-box {
   text-align: center;
   margin-top: .12rem;
+  max-width: calc(100vw / 3 - 0.16rem);
 }
 
 .share-page-home .home-body .file-content .van-grid .van-grid-item.is-gird .van-grid-item__content .describe-box .update-time .size {

@@ -171,7 +171,7 @@ export default createStore({
                     const files = (res && res.data || {}).data || {};
                     files.content = files.content.map(file => {
                         const filename = file.name.split('.');
-                        const girdShootName = `${file.name.slice(0, 7)}..${filename[filename.length - 1]}`;
+                        const girdShootName = `${file.name.slice(0, 5)}..${filename[filename.length - 1]}`;
                         const shootName = `${file.name.slice(0, 20)}..${filename[filename.length - 1]}`;
                         return {
                             ...file,
@@ -240,6 +240,8 @@ export default createStore({
                 }));
                 commit('setImages', data);
                 commit('setShareStatus', 'empty');
+            }).catch(() => {
+                commit('setShareStatus', 'offline');
             });
         },
         getSignature({ dispatch }) {
