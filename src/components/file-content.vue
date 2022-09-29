@@ -82,6 +82,7 @@ export default {
     setup() {
       const { state, dispatch } = useStore();
       return {
+          isAndroid: computed(() => state.isAndroid || {}),
           files: computed(() => state.files || {}),
           pathHistory: reactive([((state.shareInfo.content || [])[0] || {}).path]),
           page: ref(0),
@@ -137,13 +138,18 @@ export default {
             await this.getFiles(this.params);
             this.isLoading = false;
         },
-        onscroll({ target }) {
+        async onscroll({ target }) {
             const parentHeight = +window.getComputedStyle(target).height.replace(/px/ig, '');
             const tipDom = this.$el.querySelector('.tip-box');
+            const currentTop = target.scrollTop;
             const withinLimit = target.scrollTop + parentHeight > tipDom.offsetTop + 50;
             if (!this.isFinished && !this.isLoading && withinLimit) {
                 this.pageSize += originPageSize;
-                this.handlerLoadFiles();
+                await this.handlerLoadFiles();
+                if (!this.isAndroid) return;
+                this.$nextTick(() => {
+                    target.scrollTop = currentTop;
+                });
             }
         },
     },
