@@ -11,7 +11,7 @@ import store from '../store';
 import { Toast } from 'vant';
 
 // const root = `${window.location.protocol}//${window.location.host}`;
-const baseRoot = 'https://api.hificloud.net/';
+const baseRoot = 'https://api2.hificloud.net/';
 const businessRoot = 'https://agent.hificloud.net/';
 
 const axiosConfig = {
