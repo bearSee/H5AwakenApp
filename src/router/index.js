@@ -53,7 +53,7 @@ const router = createRouter({
 router.beforeEach(async (to, from, next) => {
     if (!state.queryParams) await dispatch('getQueryParams');
     if (!state.assetConfig) await dispatch('getAssetConfig');
-
+    console.log(to.path, '\nfrom.path', from.path);
     if (to.meta && to.meta.authority === false) {
         next();
         return;
@@ -82,16 +82,18 @@ router.beforeEach(async (to, from, next) => {
     }
     
     if (!['/home', '/login'].includes(to.path)) {
-        next('/home');
-        setTimeout(() => { commit('setURLStatic', '/home'); }, 500);
+        next('/login');
+        setTimeout(() => { commit('setURLStatic', '/login'); }, 500);
         return;
     }
 
-    if ((state.queryParams || {}).redirectPath && (state.queryParams || {}).redirectPath !== to.name) {
-        next(`/${state.queryParams.redirectPath}`);
-        setTimeout(() => { commit('setURLStatic', `/${state.queryParams.redirectPath}`); }, 500);
-        return;
-    }
+    // let redirectPath = (state.queryParams || {}).redirectPath && (state.queryParams || {}).redirectPath;
+    // if (redirectPath !== to.name) {
+    //     redirectPath = redirectPath ? (redirectPath[0] === '/' ? redirectPath : `/${redirectPath}`) : '';
+    //     next(redirectPath);
+    //     setTimeout(() => { commit('setURLStatic', redirectPath); }, 500);
+    //     return;
+    // }
 
     next();
     setTimeout(() => { commit('setURLStatic', to.path); }, 500);
