@@ -4,8 +4,8 @@
         <avatar-info />
         <div class="operate-box">
           <div class="operate" @click="isGird = !isGird">
-            <img class="oper-icon" :src="require(`@/assets/image/${isGird ? 'menu_view_grid' : 'menu_view_pic'}.png`)" alt="" srcset="">
-            <span>{{ isGird ? '宫格' : '大图' }}</span>
+            <img class="oper-icon" :src="require(`@/assets/image/${isGird ? 'menu_view_pic' : 'menu_view_grid'}.png`)" alt="" srcset="">
+            <span>{{ isGird ? '大图' : '宫格' }}</span>
           </div>
         </div>
       </div>

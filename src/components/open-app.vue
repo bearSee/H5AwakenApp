@@ -4,13 +4,21 @@
             <slot />
         </div>
         <wx-open-launch-app
-            class="open-btn"
+            class="wx-open-btn"
             v-if="isWeixin && isSignatured && isAndroid"
             :appid="appId"
             :extinfo="JSON.stringify(extinfo)">
             <component :is="'script'" type="text/wxtag-template">
-                <!-- <component :is="'style'"></component> -->
-                <div class="btn-content">打开APP</div>
+                <component :is="'style'">
+                    .wx-btn-content {
+                        position: absolute;
+                        top: 0;
+                        left: 0;
+                        width: 100%;
+                        height: 100%;
+                    }
+                </component>
+                <div class="wx-btn-content">打开APP</div>
             </component>
         </wx-open-launch-app>
     </div>
@@ -113,7 +121,7 @@ export default {
         },
     },
     mounted() {
-        const btn = this.$el.querySelector('.open-btn');
+        const btn = this.$el.querySelector('.wx-open-btn');
         if (!btn) return;
         btn.addEventListener('launch', this.handlerSuccess);
         btn.addEventListener('error', this.handlerError);
@@ -138,7 +146,7 @@ export default {
     width: 100%;
     height: 100%;
 }
-.open-app .open-btn,.open-app .btn-content {
+.open-app .wx-open-btn {
     position: absolute;
     top: 0;
     left: 0;
@@ -146,5 +154,7 @@ export default {
     right: 0;
     z-index: 1;
     opacity: 0;
+    width: 100%;
+    height: 100%;
 }
 </style>

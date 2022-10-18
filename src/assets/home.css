@@ -78,6 +78,7 @@
 
 .share-page-home .home-body .file-content .user-info .avatar-info .nickname, .share-page-home .home-body .image-content .user-info .avatar-info .nickname {
   margin: auto .12rem;
+  min-width: 0.9rem;
 }
 
 .share-page-home .home-body .file-content .user-info .operate-box, .share-page-home .home-body .image-content .user-info .operate-box {
@@ -86,6 +87,7 @@
 
 .share-page-home .home-body .file-content .user-info .operate-box .van-popover__wrapper, .share-page-home .home-body .image-content .user-info .operate-box .van-popover__wrapper {
   margin: auto .2rem;
+  min-width: 0.52rem;
 }
 
 .share-page-home .home-body .file-content .user-info .operate-box .operate, .share-page-home .home-body .image-content .user-info .operate-box .operate {
@@ -102,6 +104,7 @@
 
 .share-page-home .home-body .file-content .user-info .operate-box .operate span, .share-page-home .home-body .image-content .user-info .operate-box .operate span {
   margin: auto 0;
+  min-width: 0.3rem;
 }
 
 .share-page-home .home-body .file-content .photo-box, .share-page-home .home-body .image-content .photo-box {
@@ -205,6 +208,10 @@
   justify-content: start;
 }
 
+.share-page-home .home-body .file-content .van-grid .van-grid-item.is-list .van-grid-item__content .open-app {
+  width: 100%;
+}
+
 .share-page-home .home-body .file-content .van-grid .van-grid-item.is-list .van-grid-item__content:active {
   background: #f8f8f8;
 }
@@ -240,13 +247,15 @@
   background: #f8f8f8;
 }
 
-.share-page-home .home-body .file-content .van-grid .van-grid-item.is-gird .van-grid-item__content .van-image, .share-page-home .home-body .file-content .van-grid .van-grid-item.is-gird .van-grid-item__content .image-container {
-  width: .61rem;
-  height: .61rem;
+.share-page-home .home-body .file-content .van-grid .van-grid-item.is-gird .van-grid-item__content .open-app .camouflage-btn {
+  align-items: center;
+  flex-direction: column;
 }
 
-.share-page-home .home-body .file-content .van-grid .van-grid-item.is-gird .van-grid-item__content .image-container {
-  padding: .06rem;
+.share-page-home .home-body .file-content .van-grid .van-grid-item.is-gird .van-grid-item__content .van-image, .share-page-home .home-body .file-content .van-grid .van-grid-item.is-gird .van-grid-item__content .image-container {
+  width: 1rem;
+  max-width: calc(100vw / 3 - .16rem);
+  height: 1rem;
 }
 
 .share-page-home .home-body .file-content .van-grid .van-grid-item.is-gird .van-grid-item__content .describe-box {
@@ -338,6 +347,10 @@
 .share-page-home .home-body .van-empty.offline .van-empty__image {
   width: 3rem;
   height: 1.5rem;
+}
+
+.share-page-home .home-body .van-empty.transparent_empty {
+  opacity: 0;
 }
 
 .share-page-home .home-body .van-empty .van-empty__bottom {

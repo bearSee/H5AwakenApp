@@ -34,6 +34,14 @@ const routes = [
             authority: false,
         },
     },
+    {
+        path: '/test',
+        name: 'test',
+        component: () => import('@/views/test'),
+        meta: {
+            authority: false,
+        },
+    },
 ]
 
 const router = createRouter({

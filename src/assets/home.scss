@@ -63,12 +63,14 @@
           }
           .nickname {
             margin: auto .12rem;
+            min-width: 0.9rem;
           }
         }
         .operate-box {
           display: flex;
           .van-popover__wrapper {
             margin: auto .2rem;
+            min-width: 0.52rem;
           }
           .operate {
             display: flex;
@@ -81,6 +83,7 @@
             }
             span {
               margin: auto 0;
+              min-width: 0.3rem;
             }
           }
         }
@@ -173,6 +176,9 @@
               border-bottom: .01rem solid #e6e6e6;
               flex-direction: row;
               justify-content: start;
+              .open-app {
+                width: 100%;
+              }
               &:active {
                 background: #f8f8f8;
               }
@@ -207,12 +213,27 @@
               &:active {
                 background: #f8f8f8;
               }
+              .open-app {
+                .camouflage-btn {
+                  align-items: center;
+                  flex-direction: column;
+                }
+              }
               .van-image, .image-container {
-                width: .61rem;
-                height: .61rem;
+                // width: .61rem;
+                // height: .61rem;
+                width: 1rem;
+                max-width: calc(100vw / 3 - .16rem);
+                height: 1rem;
               }
               .image-container {
-                padding: .06rem;
+                // width: .61rem;
+                // height: .61rem;
+                // width: 1rem;
+                // height: 1rem;
+              }
+              .image-container {
+                // padding: .06rem;
               }
               .describe-box {
                 text-align: center;
@@ -306,6 +327,9 @@
           width: 3rem;
           height: 1.5rem;
         }
+      }
+      &.transparent_empty {
+        opacity: 0;
       }
       .van-empty__bottom {
         font-size: .15rem;

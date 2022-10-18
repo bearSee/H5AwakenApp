@@ -26,10 +26,11 @@ export default createStore({
         isSignatured: true,
         queryParams: null,
         isLogined: false,
+        isLoading: false,
         userInfo: {},
         // 分享概要信息
         shareInfo: {},
-        // loading/empty/invalid/offline
+        // loading/empty/invalid/offline/cancel
         shareStatus: 'loading',
         files: {},
         albums: {},
@@ -51,6 +52,9 @@ export default createStore({
         },
         setLogined(state, payload) {
             state.isLogined = payload;
+        },
+        setLoading(state, payload) {
+            state.isLoading = payload;
         },
         setShareStatus(state, payload) {
             state.shareStatus = payload || 'empty';
@@ -79,11 +83,10 @@ export default createStore({
             state.overlayVisible = payload || false;
         },
         setURLStatic(state, path) {
+            path = Object.prototype.toString.call(path) === '[object String]' && path && path !== '/' ? (path[0] === '/' ? path : `/${path}`) : '/login';
             const host = `${(window.location.href.split('?')[0] || '').split('#')[0]}#${path}`;
-            const nickname = (state.userInfo.wechat || {}).nickname || state.userInfo.nickname || '';
             const newUrl = `${host}?${qs.stringify({
                 id: window.sessionStorage.getItem('shareId'),
-                nickname,
                 token: window.localStorage.getItem('token'),
                 inviteCode: state.queryParams.inviteCode || '',
                 key: state.queryParams.key || '',
@@ -129,18 +132,26 @@ export default createStore({
                 commit('setShareStatus', 'invalid');
                 return;
             }
+            commit('setLoading', true);
             axios.get(`share/ghost/info?sid=${shareId}`, { headers: { 'Api-Version': '1.16' } }).then((res) => {
                 const shareData = (res && res.data || {}).data || {};
                 commit('setShareInfo', shareData);
+                //  device的hostname节点不存在，即设备离线
+                const isOffline = !(shareData.device || {}).hostname;
+                if (isOffline) {
+                    commit('setShareStatus', 'offline');
+                    return;
+                }
                 // const actionTypes = { ONLY_READ_DIR: 'getFiles', ONLY_READ_ALBUM: 'getAlbums' };
                 const actionTypes = { ONLY_READ_DIR: 'getFiles', ONLY_READ_ALBUM: 'getImages' };
                 dispatch(actionTypes[shareData.tag]);
             }).catch((err) => {
                 const shareStatus = ({
-                    470: 'offline',
-                    400: 'invalid',
-                })[(err && err.data || {}).status] || 'offline';
+                    1401: 'cancel',
+                    2001: 'cancel',
+                })[(err && err.data || {}).status] || 'invalid';
                 commit('setShareStatus', shareStatus);
+                commit('setLoading', false);
             });
         },
         // 获取文件
@@ -161,6 +172,7 @@ export default createStore({
                 message: '加载中...',
                 forbidClick: true,
             });
+            commit('setLoading', true);
             return new Promise((resolve) => {
                 axios.get(`${window._businessRoot}${deviceId}/anonymous/v3/file/list?${qs.stringify({
                     path,
@@ -204,6 +216,7 @@ export default createStore({
                         "totalItem": 1
                      */
                 }).finally(() => {
+                    commit('setLoading', false);
                     Toast.clear();
                     resolve();
                 });
@@ -228,6 +241,12 @@ export default createStore({
             const id = payload.albumId || ((state.shareInfo.content || [])[0] || {}).albumId;
             // 相片所有者(相簿owner)id
             const uid = payload.uid || (state.shareInfo.owner || {}).id;
+            Toast.loading({
+                duration: 0,
+                message: '加载中...',
+                forbidClick: true,
+            });
+            commit('setLoading', true);
             axios.get(`${window._businessRoot}${deviceId}/anonymous/v3/album/media/list?id=${id}`, { headers: { 'Api-Version': '1.16' } }).then((res) => {
                 const data = (((res && res.data || {}).data || {}).content || []).map(d => ({
                     ...d,
@@ -240,8 +259,15 @@ export default createStore({
                 }));
                 commit('setImages', data);
                 commit('setShareStatus', 'empty');
-            }).catch(() => {
-                commit('setShareStatus', 'offline');
+            }).catch((err) => {
+                const shareStatus = ({
+                    1401: 'cancel',
+                    2001: 'cancel',
+                })[(err && err.data || {}).status] || 'invalid';
+                commit('setShareStatus', shareStatus);
+            }).finally(() => {
+                commit('setLoading', false);
+                Toast.clear();
             });
         },
         getSignature({ dispatch }) {
@@ -283,10 +309,11 @@ export default createStore({
          * wx1fcdb848faaefcf9
          * AppSecret: 496cf4fdf48ea6b5854f6c1bc13729b6
          */
-        wxAuthorization({ state }, path) {
+        wxAuthorization({ state }, payload) {
             if (!/MicroMessenger/i.test(window.navigator.userAgent.toLowerCase())) return;
+            const path = payload && Object.prototype.toString.call(payload) === '[object String]' ? (payload[0] === '/' ? payload : `/${payload}`) : '';
             const url = 'https://open.weixin.qq.com/connect/oauth2/authorize';
-            const redirect_uri = `${(window.location.href.split('?')[0] || '').split('#')[0]}#/login`;
+            const redirect_uri = `${(window.location.href.split('?')[0] || '').split('#')[0]}#${path || '/login'}`;
             const response_type = 'code';
             const scope = 'snsapi_userinfo';
             const newUrl = `${url}?${qs.stringify({
@@ -294,7 +321,7 @@ export default createStore({
                 redirect_uri,
                 response_type,
                 scope,
-                state: path || '',
+                state: payload || '',
             })}#wechat_redirect`;
             window.location.replace(newUrl);
         },
@@ -304,6 +331,7 @@ export default createStore({
                 axios.post('/web/wechat/login', { code }).then((res) => {
                     const data = (res && res.data || {}).data;
                     dispatch('loginSuccess', data);
+                    console.log('wxLogin', data);
                     Toast('微信快捷登录成功');
                     resolve(res);
                 }).catch(reject);
@@ -327,19 +355,19 @@ export default createStore({
             commit('setUserInfo', payload);
             commit('setURLStatic');
         },
-        checkLoginStatus({ state, commit, dispatch }, payload) {
-            const { token, nickname } = payload || {};
+        checkLoginStatus({ commit, dispatch }, payload) {
+            const { token } = payload || {};
             return new Promise((resolve) => {
-                window.localStorage.setItem('token', token);
                 if (!token) {
                     resolve(false);
                     commit('clearAuthorization');
                     return;
                 }
-                axios.get('/token/verify', { headers: { 'Api-Version': '1.16' } }).then(async (res) => {
-                    const isLogined = !!(res && res.data && res.data || {}).data;
-                    isLogined ? await dispatch('loginSuccess', { nickname: (state.queryParams || {}).nickname || nickname || '', token }) : await commit('clearAuthorization');
-                    resolve(isLogined);
+                axios.get('/refresh', { headers: { 'Api-Version': '1.16' } }).then(async (res) => {
+                    const data = (res && res.data && res.data || {}).data || {};
+                    window.localStorage.setItem('token', data.token || token);
+                    await dispatch('loginSuccess', { ...payload, ...data });
+                    resolve(true);
                 }).catch(() => {
                     resolve(false);
                     commit('clearAuthorization');

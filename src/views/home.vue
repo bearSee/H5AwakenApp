@@ -21,16 +21,18 @@
       </open-app>
     </div>
     <div class="home-body" id="home-body">
-      <van-empty v-if="isEmpty" :class="shareStatus" :image="require(`@/assets/image/${shareStatus === 'offline' ? '404' : 'empty'}.png`)" >
+      <van-empty v-if="isEmpty" :class="[shareStatus, isLoading && 'transparent_empty']" :image="require(`@/assets/image/${shareStatus === 'offline' ? '404' : 'empty'}.png`)" >
         <div class="tip-t">{{ ({
           offline: '设备离线',
           invalid: '该分享已失效',
+          cancel: '该分享已取消',
           empty: '相簿内无图片和视频',
           loading: '正在获取分享内容...',
         })[shareStatus] }}</div>
         <div class="tip-c">{{ ({
           offline: '抱歉，此设备网络或状态异常，无法访问！',
           invalid: '抱歉，该分享已经失效！',
+          cancel: '抱歉，该分享已经取消！',
           empty: '',
           loading: '请稍后',
         })[shareStatus] }}</div>
@@ -78,6 +80,7 @@ export default {
       return {
           homeConfig: computed(() => (state.assetConfig || {}).home || {}),
           isEmpty: computed(() => !state.shareInfo.tag || (!state.images.length && state.shareInfo.tag === 'ONLY_READ_ALBUM')),
+          isLoading: computed(() => state.isLoading),
           componentTag: computed(() => state.shareInfo.tag),
           shareStatus: computed(() => state.shareStatus),
           getShareInfo: () => {

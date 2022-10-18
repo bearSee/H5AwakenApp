@@ -17,8 +17,8 @@
             </template>
           </van-popover>
           <div class="operate" @click="isGird = !isGird">
-            <img class="oper-icon" :src="require(`@/assets/image/${isGird ? 'menu_view_grid' : 'menu_view_list'}.png`)" alt="" srcset="">
-            <span>{{ isGird ? '宫格' : '列表' }}</span>
+            <img class="oper-icon" :src="require(`@/assets/image/${isGird ? 'menu_view_list' : 'menu_view_grid'}.png`)" alt="" srcset="">
+            <span>{{ isGird ? '列表' : '宫格' }}</span>
           </div>
         </div>
       </div>
@@ -32,32 +32,50 @@
       <template v-if="(files.content || []).length">
         <van-grid :border="false" :column-num="isGird ? 3 : 1">
           <van-grid-item v-for="file in files.content || []" :key="file.id" :class="isGird ? 'is-gird' : 'is-list'" @click="handlerViewDetail(file)">
-            <div
-              v-if="file.thumbnailUrl"
-              class="image-container"
-              :style="`background-image: url(${require(`@/assets/image/no_pic.png`)})`">
-              <div class="image-div" :style="`background-image: url(${file.thumbnailUrl});`"></div>
-            </div>
-            <van-image
-              v-else
-              fit="cover"
-              :src="require(`@/assets/image/${file.fileType === 2 ? 'file_folder' : 'file_default'}.png`)" />
-            <div class="describe-box">
-              <div class="file-name">{{ isGird ? file.girdShootName : file.shootName }}</div>
-              <div class="update-time"><span class="time">{{ formatDate(new Date(file.modifyTime), 'YYYY-MM-DD hh:mm') }}</span> <span class="size">{{ file.size && file.fileType !== 2 ? `${(file.size / 1024 / 1024).toFixed(2)}M` : '' }}</span></div>
-              <van-icon v-if="!isGird && file.fileType === 2" name="arrow" />
-            </div>
+            <open-app :params="{ openType: componentTag }" v-if="file.fileType !== 2">
+              <div
+                v-if="file.thumbnailUrl"
+                class="image-container"
+                :style="`background-image: url(${require(`@/assets/image/no_pic.png`)})`">
+                <div class="image-div" :style="`background-image: url(${file.thumbnailUrl});`"></div>
+              </div>
+              <van-image
+                v-else
+                fit="contain"
+                :src="require(`@/assets/image/file_default.png`)" />
+              <div class="describe-box">
+                <div class="file-name">{{ isGird ? file.girdShootName : file.shootName }}</div>
+                <div class="update-time"><span class="time">{{ formatDate(new Date(file.modifyTime), 'YYYY-MM-DD hh:mm') }}</span> <span class="size">{{ file.size && file.fileType !== 2 ? resetSize(file.size) : '' }}</span></div>
+              </div>
+            </open-app>
+            <template v-else>
+              <div
+                v-if="file.thumbnailUrl"
+                class="image-container"
+                :style="`background-image: url(${require(`@/assets/image/no_pic.png`)})`">
+                <div class="image-div" :style="`background-image: url(${file.thumbnailUrl});`"></div>
+              </div>
+              <van-image
+                v-else
+                fit="contain"
+                :src="require(`@/assets/image/${file.fileType === 2 ? 'file_folder' : 'file_default'}.png`)" />
+              <div class="describe-box">
+                <div class="file-name">{{ isGird ? file.girdShootName : file.shootName }}</div>
+                <div class="update-time"><span class="time">{{ formatDate(new Date(file.modifyTime), 'YYYY-MM-DD hh:mm') }}</span> <span class="size">{{ file.size && file.fileType !== 2 ? `${(file.size / 1024 / 1024).toFixed(2)}M` : '' }}</span></div>
+                <van-icon v-if="!isGird && file.fileType === 2" name="arrow" />
+              </div>
+            </template>
           </van-grid-item>
         </van-grid>
-        <div class="tip-box van-list__finished-text">{{ isFinished ? '没有更多了' : (isLoading ? '正在加载...' : '上拉加载更多') }}</div>
+        <div class="tip-box van-list__finished-text" v-show="!(isFinished && total <= originPageSize)">{{ isFinished ? '没有更多了' : (isLoading ? '正在加载...' : '上拉加载更多') }}</div>
       </template>
-      <van-empty v-else class="empty" :image="require(`@/assets/image/empty.png`)" description="暂无内容" />
-      <van-dialog class="preview-dialog-tip" title="提示" v-model:show="visible" :show-confirm-button="false">
+      <van-empty v-else class="empty" :class="isLoading && 'transparent_empty'" :image="require(`@/assets/image/empty.png`)" description="暂无内容" />
+      <!-- <van-dialog class="preview-dialog-tip" title="提示" v-model:show="visible" :show-confirm-button="false">
         <div class="van-dialog__message van-dialog__message--has-title">分享文件不支持在线预览方式，请打开APP浏览</div>
         <open-app class="van-hairline--top van-dialog__footer" :params="{ openType: componentTag }" @handler-comfirm="visible = false">
           <van-button style="width: 100%;color:#007AFF;font-size:.16rem;">确 定</van-button>
         </open-app>
-      </van-dialog>
+      </van-dialog> -->
   </div>
 </template>
 
@@ -78,21 +96,25 @@ export default {
             default: '',
         },
     },
-    components: { avatarInfo, openApp },
+    components: {
+        avatarInfo,
+        openApp,
+    },
     setup() {
       const { state, dispatch } = useStore();
       return {
           isAndroid: computed(() => state.isAndroid || {}),
           files: computed(() => state.files || {}),
+          total: computed(() => (state.files || {}).totalItem || 0),
           pathHistory: reactive([((state.shareInfo.content || [])[0] || {}).path]),
           page: ref(0),
           pageSize: ref(originPageSize),
           classifyCount: computed(() => (state.files || {}).classifyCount || {}),
-          isLoading: ref(false),
-          visible: ref(false),
+          isLoading: computed(() => state.isLoading),
+          // visible: ref(false),
           isFinished: computed(() => (state.files.content || []).length >= state.files.totalItem),
           // 是否为宫格展示
-          isGird: ref(true),
+          isGird: ref(false),
           showPopover: ref(false),
           filters: [
             { text: '名称', code: 'zd' },
@@ -103,6 +125,11 @@ export default {
           getFiles: params => dispatch('getFiles', params),
           formatDate,
       };
+    },
+    data() {
+        return {
+            originPageSize,
+        }
     },
     computed: {
         params() {
@@ -125,7 +152,7 @@ export default {
                 this.handlerLoadFiles();
                 return;
             }
-            this.visible = true;
+            // this.visible = true;
         },
         handlerBack() {
             if (this.pathHistory.length < 2) return;
@@ -134,9 +161,7 @@ export default {
             this.handlerLoadFiles();
         },
         async handlerLoadFiles() {
-            this.isLoading = true;
             await this.getFiles(this.params);
-            this.isLoading = false;
         },
         async onscroll({ target }) {
             const parentHeight = +window.getComputedStyle(target).height.replace(/px/ig, '');
@@ -151,6 +176,12 @@ export default {
                     target.scrollTop = currentTop;
                 });
             }
+        },
+        resetSize(size) {
+            if (size > (1024 * 1024 * 1024)) return `${(size / 1024 / 1024 / 1024).toFixed(2)}G`;
+            if (size > (1024 * 1024)) return `${(size / 1024 / 1024).toFixed(2)}M`;
+            if (size > 1024) return `${(size / 1024).toFixed(1)}K`;
+            return `${size}B`;
         },
     },
     mounted () {
