@@ -16,7 +16,7 @@
                 <span class="ac-name">{{ action.text }}</span>
             </template>
           </van-popover>
-          <div class="operate" @click="isGird = !isGird">
+          <div class="operate" @click="handlerChangeGrid">
             <img class="oper-icon" :src="require(`@/assets/image/${isGird ? 'menu_view_list' : 'menu_view_grid'}.png`)" alt="" srcset="">
             <span>{{ isGird ? '列表' : '宫格' }}</span>
           </div>
@@ -34,7 +34,7 @@
         <!-- <span class="back" v-if="pathHistory.length > 1" @click="handlerBack"><van-icon name="arrow-left" /> 返回上一级</span> -->
       </div>
       <template v-if="(files.content || []).length">
-        <van-grid :class="isGird ? 'is-gird' : 'is-list'" :border="false" :column-num="isGird ? 3 : 1">
+        <van-grid v-if="isCreated" :class="isGird ? 'is-gird' : 'is-list'" :border="false" :column-num="isGird ? 3 : 1">
           <van-grid-item v-for="file in files.content || []" :key="file.id" @click="handlerViewDetail(file)">
             <open-app :params="{ openType: componentTag, item: file.path }" v-if="file.fileType !== 2">
               <div
@@ -109,6 +109,8 @@ export default {
       const { state, dispatch } = useStore();
       return {
           isAndroid: computed(() => state.isAndroid || {}),
+          isWeixin: computed(() => state.isWeixin),
+          isCreated: ref(true),
           files: computed(() => state.files || {}),
           total: computed(() => (state.files || {}).totalItem || 0),
           pathHistory: reactive([(state.shareInfo.content || [])[0] || {}]),
@@ -167,6 +169,15 @@ export default {
                 return;
             }
             // this.visible = true;
+        },
+        handlerChangeGrid() {
+            this.isGird = !this.isGird;
+            if (this.isAndroid && this.isWeixin) {
+                this.isCreated = false;
+                this.$nextTick(() => {
+                    this.isCreated = true;
+                });
+            }
         },
         handlerBack() {
             if (this.pathHistory.length < 2) return;
