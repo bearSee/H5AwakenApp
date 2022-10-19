@@ -30,8 +30,8 @@ export default createStore({
         userInfo: {},
         // 分享概要信息
         shareInfo: {},
-        // loading/empty/invalid/offline/cancel
-        shareStatus: 'loading',
+        // empty/invalid/offline/cancel
+        shareStatus: 'invalid',
         files: {},
         albums: {},
         images: [],
@@ -57,7 +57,7 @@ export default createStore({
             state.isLoading = payload;
         },
         setShareStatus(state, payload) {
-            state.shareStatus = payload || 'empty';
+            state.shareStatus = payload || 'invalid';
         },
         setUserInfo(state, payload) {
             state.userInfo = payload || {};
@@ -140,6 +140,7 @@ export default createStore({
                 const isOffline = !(shareData.device || {}).hostname;
                 if (isOffline) {
                     commit('setShareStatus', 'offline');
+                    commit('setLoading', false);
                     return;
                 }
                 // const actionTypes = { ONLY_READ_DIR: 'getFiles', ONLY_READ_ALBUM: 'getAlbums' };
@@ -169,7 +170,8 @@ export default createStore({
             const deviceId = (state.shareInfo.device || {}).id;
             Toast.loading({
                 duration: 0,
-                message: '加载中...',
+                className: 'toast-loading',
+                message: '加载中',
                 forbidClick: true,
             });
             commit('setLoading', true);
@@ -194,7 +196,6 @@ export default createStore({
                         };
                     })
                     commit('setFiles', files);
-                    commit('setShareStatus', 'empty');
                     /**
                         "content": [
                             {
@@ -243,7 +244,8 @@ export default createStore({
             const uid = payload.uid || (state.shareInfo.owner || {}).id;
             Toast.loading({
                 duration: 0,
-                message: '加载中...',
+                className: 'toast-loading',
+                message: '加载中',
                 forbidClick: true,
             });
             commit('setLoading', true);
@@ -258,11 +260,12 @@ export default createStore({
                     originUrl: `${window._businessRoot}${deviceId}/anonymous/image?${qs.stringify({ uid, md5: d.md5, imgType: 0 })}`,
                 }));
                 commit('setImages', data);
-                commit('setShareStatus', 'empty');
+                if (!data.length) commit('setShareStatus', 'empty');
             }).catch((err) => {
                 const shareStatus = ({
                     1401: 'cancel',
                     2001: 'cancel',
+                    470: 'offline',
                 })[(err && err.data || {}).status] || 'invalid';
                 commit('setShareStatus', shareStatus);
             }).finally(() => {

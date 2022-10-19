@@ -58,7 +58,7 @@
                 <template #icon="{ checked }">
                   <img class="img-icon" :src="require(`@/assets/image/${checked ? 'checked' : 'unchecked'}.png`)" />
                 </template>
-                注册/登录即代表同意<span class="txt" @click.stop="">《用户协议》</span>和<span class="txt" @click.stop="">《隐私协议》</span>
+                注册/登录即代表同意<span class="txt" @click.stop="handlerSkip('user')">《用户协议》</span>和<span class="txt" @click.stop="handlerSkip('privacy')">《隐私协议》</span>
               </van-checkbox>
             </template>
           </van-field>
@@ -171,6 +171,13 @@ export default {
               return;
           }
           this.handlerLogin({ auth, telephone });
+      },
+      handlerSkip(type) {
+          const address = ({
+              user: 'https://doc.hificloud.net/doc/hificloudagreement.html',
+              privacy: 'https://doc.hificloud.net/doc/hificloudprivate.html',
+          })[type];
+          window.open(address);
       },
   },
   created() {

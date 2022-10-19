@@ -23,16 +23,20 @@
         </div>
       </div>
       <div class="photo-box">
-        <div class="photo-t">文件分享</div>
+        <div class="photo-operate">
+            <span class="last-name" :class="!currentPathName && 'is_main'" @click="handlerBack">{{ lastPathName }}</span>
+            <van-icon v-if="currentPathName" name="arrow" />
+            <span class="current-name">{{ currentPathName }}</span>
+        </div>
         <div class="photo-c">
           <span>共 {{ classifyCount['fileType_2'] || 0 }} 个文件夹，{{ classifyCount['fileType_1'] || 0 }} 个文件</span>
         </div>
-        <span class="back" v-if="pathHistory.length > 1" @click="handlerBack"><van-icon name="arrow-left" /> 返回上一级</span>
+        <!-- <span class="back" v-if="pathHistory.length > 1" @click="handlerBack"><van-icon name="arrow-left" /> 返回上一级</span> -->
       </div>
       <template v-if="(files.content || []).length">
-        <van-grid :border="false" :column-num="isGird ? 3 : 1">
-          <van-grid-item v-for="file in files.content || []" :key="file.id" :class="isGird ? 'is-gird' : 'is-list'" @click="handlerViewDetail(file)">
-            <open-app :params="{ openType: componentTag }" v-if="file.fileType !== 2">
+        <van-grid :class="isGird ? 'is-gird' : 'is-list'" :border="false" :column-num="isGird ? 3 : 1">
+          <van-grid-item v-for="file in files.content || []" :key="file.id" @click="handlerViewDetail(file)">
+            <open-app :params="{ openType: componentTag, item: file.path }" v-if="file.fileType !== 2">
               <div
                 v-if="file.thumbnailUrl"
                 class="image-container"
@@ -42,10 +46,11 @@
               <van-image
                 v-else
                 fit="contain"
-                :src="require(`@/assets/image/file_default.png`)" />
+                :src="require(`@/assets/image/gird_file.png`)" />
               <div class="describe-box">
                 <div class="file-name">{{ isGird ? file.girdShootName : file.shootName }}</div>
-                <div class="update-time"><span class="time">{{ formatDate(new Date(file.modifyTime), 'YYYY-MM-DD hh:mm') }}</span> <span class="size">{{ file.size && file.fileType !== 2 ? resetSize(file.size) : '' }}</span></div>
+                <div class="update-time">{{ formatDate(new Date(file.modifyTime), 'YYYY-MM-DD hh:mm') }} <span v-if="!isGird">{{ resetSize(file.size) }}</span></div>
+                <div class="file-size" v-if="isGird">{{ resetSize(file.size) }}</div>
               </div>
             </open-app>
             <template v-else>
@@ -58,10 +63,10 @@
               <van-image
                 v-else
                 fit="contain"
-                :src="require(`@/assets/image/${file.fileType === 2 ? 'file_folder' : 'file_default'}.png`)" />
+                :src="require(`@/assets/image/${file.fileType === 2 ? 'gird_folder' : 'gird_file'}.png`)" />
               <div class="describe-box">
                 <div class="file-name">{{ isGird ? file.girdShootName : file.shootName }}</div>
-                <div class="update-time"><span class="time">{{ formatDate(new Date(file.modifyTime), 'YYYY-MM-DD hh:mm') }}</span> <span class="size">{{ file.size && file.fileType !== 2 ? `${(file.size / 1024 / 1024).toFixed(2)}M` : '' }}</span></div>
+                <div class="update-time">{{ formatDate(new Date(file.modifyTime), 'YYYY-MM-DD hh:mm') }}</div>
                 <van-icon v-if="!isGird && file.fileType === 2" name="arrow" />
               </div>
             </template>
@@ -106,7 +111,7 @@ export default {
           isAndroid: computed(() => state.isAndroid || {}),
           files: computed(() => state.files || {}),
           total: computed(() => (state.files || {}).totalItem || 0),
-          pathHistory: reactive([((state.shareInfo.content || [])[0] || {}).path]),
+          pathHistory: reactive([(state.shareInfo.content || [])[0] || {}]),
           page: ref(0),
           pageSize: ref(originPageSize),
           classifyCount: computed(() => (state.files || {}).classifyCount || {}),
@@ -134,10 +139,18 @@ export default {
     computed: {
         params() {
             return {
-                path: this.pathHistory[this.pathHistory.length - 1],
+                path: (this.pathHistory[this.pathHistory.length - 1] || {}).path,
                 sort: this.filterCode,
                 range: `${this.page},${this.pageSize}`,
             };
+        },
+        lastPathName() {
+            const { girdShootName, shootName } = this.pathHistory[this.pathHistory.length - 2] || {};
+            return girdShootName || shootName || '文件分享';
+        },
+        currentPathName() {
+            const { girdShootName, shootName } = this.pathHistory[this.pathHistory.length - 1] || {};
+            return girdShootName || shootName;
         },
     },
     methods: {
@@ -145,9 +158,10 @@ export default {
             this.filterCode = code;
             this.handlerLoadFiles();
         },
-        handlerViewDetail({ fileType, path }) {
+        handlerViewDetail(file) {
+          const { fileType } = file;
             if (fileType === 2) {
-                this.pathHistory.push(path);
+                this.pathHistory.push(file);
                 this.pageSize = originPageSize;
                 this.handlerLoadFiles();
                 return;
@@ -189,3 +203,7 @@ export default {
     },
 }
 </script>
+
+<style>
+  @import '@/assets/file-content.css';
+</style>

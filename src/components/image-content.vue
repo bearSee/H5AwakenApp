@@ -33,7 +33,7 @@
             <open-app
               class="image-mask"
               :class="isGird && 'is-gird'"
-              :params="{ openType: componentTag }"
+              :params="{ openType: componentTag, item: image.md5 }"
               v-if="homeConfig.maxFileLength > 0 && images.length > homeConfig.maxFileLength && i >= (homeConfig.maxFileLength - 1)">
               <span>+ {{ images.length - homeConfig.maxFileLength + 1 }}</span>
             </open-app>
@@ -43,9 +43,10 @@
       <van-image-preview
         class-name="image-preview-dialog"
         overlay-class="image-preview-mask"
+        teleport="body"
         closeable
         v-model:show="previewVisible"
-        :images="homeConfig.maxFileLength > 0 ? previewImages.slice(0, homeConfig.maxFileLength - 1) : previewImages"
+        :images="homeConfig.maxFileLength > 0 && images.length > homeConfig.maxFileLength ? previewImages.slice(0, homeConfig.maxFileLength - 1) : previewImages"
         :start-position="previewStartPosition"
         :close-icon="require(`@/assets/image/close.png`)"
         @change="previewChange"
@@ -59,11 +60,11 @@
             查看原图（{{ ((currentImage.size || 0) / 1024 / 1024).toFixed(2) }}M）
           </van-button>
           <div class="operate-box">
-            <open-app class="save-btn" :params="{ openType: componentTag }">
+            <open-app class="save-btn" :params="{ openType: 'SAVE_TO', item: currentImage.md5 }">
               <img src="@/assets/image/btn_save_large.png" alt="" srcset="">
               <div>转存</div>
             </open-app>
-            <open-app class="open-btn" :params="{ openType: componentTag }">
+            <open-app class="open-btn" :params="{ openType: componentTag, item: currentImage.md5 }">
               <img src="@/assets/image/applogo.png" alt="" srcset="">
               <div>用APP查看</div>
             </open-app>
@@ -113,7 +114,8 @@ export default {
   },
   methods: {
       handlerPreview(index) {
-          if (index + 1 >= this.homeConfig.maxFileLength) return;
+          const maxFileLength = this.homeConfig.maxFileLength;
+          if (index + 1 >= maxFileLength && (maxFileLength > 0 && this.images.length > maxFileLength)) return;
           this.previewStartPosition = index;
           this.previewVisible = true;
           this.currentImage = this.images[index] || {};
@@ -134,3 +136,7 @@ export default {
   },
 }
 </script>
+
+<style>
+  @import '@/assets/image-content.css';
+</style>

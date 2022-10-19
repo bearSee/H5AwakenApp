@@ -21,33 +21,16 @@
       </open-app>
     </div>
     <div class="home-body" id="home-body">
-      <van-empty v-if="isEmpty" :class="[shareStatus, isLoading && 'transparent_empty']" :image="require(`@/assets/image/${shareStatus === 'offline' ? '404' : 'empty'}.png`)" >
-        <div class="tip-t">{{ ({
-          offline: '设备离线',
-          invalid: '该分享已失效',
-          cancel: '该分享已取消',
-          empty: '相簿内无图片和视频',
-          loading: '正在获取分享内容...',
-        })[shareStatus] }}</div>
-        <div class="tip-c">{{ ({
-          offline: '抱歉，此设备网络或状态异常，无法访问！',
-          invalid: '抱歉，该分享已经失效！',
-          cancel: '抱歉，该分享已经取消！',
-          empty: '',
-          loading: '请稍后',
-        })[shareStatus] }}</div>
-      </van-empty>
       <component
-        v-else
         :component-tag="componentTag"
-        :is="({ ONLY_READ_DIR: 'fileContent', ONLY_READ_ALBUM: 'imageContent' })[componentTag]">
+        :is="({ ONLY_READ_DIR: 'fileContent', ONLY_READ_ALBUM: 'imageContent', EMPTY: 'emptyContent' })[componentTag]">
       </component>
       <van-swipe class="banner-swipe" :autoplay="3000" indicator-color="white">
         <van-swipe-item v-for="banner in (homeConfig.bannerList || [])" :key="banner">
           <img class="banner-image" :src="banner" alt="" srcset="">
         </van-swipe-item>
       </van-swipe>
-      <open-app class="save-app-box" :params="{ openType: componentTag }">
+      <open-app class="save-app-box" :params="{ openType: 'SAVE_TO' }">
         <van-button
           class="save-app-btn"
           :icon="require('@/assets/image/btn_save.png')">
@@ -70,25 +53,21 @@ import { computed } from 'vue';
 import { useStore } from 'vuex';
 import fileContent from '@/components/file-content';
 import imageContent from '@/components/image-content';
+import emptyContent from '@/components/empty-content';
 import openApp from '@/components/open-app';
 
 export default {
     name: 'shareHome',
-    components: { fileContent, imageContent, openApp },
+    components: { fileContent, imageContent, emptyContent, openApp },
     setup() {
       const { state, dispatch } = useStore();
       return {
           homeConfig: computed(() => (state.assetConfig || {}).home || {}),
-          isEmpty: computed(() => !state.shareInfo.tag || (!state.images.length && state.shareInfo.tag === 'ONLY_READ_ALBUM')),
-          isLoading: computed(() => state.isLoading),
-          componentTag: computed(() => state.shareInfo.tag),
-          shareStatus: computed(() => state.shareStatus),
+          componentTag: computed(() => !state.shareInfo.tag || (!state.images.length && state.shareInfo.tag === 'ONLY_READ_ALBUM') ? 'EMPTY' : state.shareInfo.tag),
           getShareInfo: () => {
               return dispatch('getShareInfo');
           },
       };
-  },
-  methods: {
   },
   mounted() {
       this.getShareInfo();

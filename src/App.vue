@@ -31,5 +31,6 @@ export default {
 </script>
 
 <style>
-  @import './assets/vant.css';
+  @import '@/assets/vant.css';
+  @import '@/assets/common.css';
 </style>

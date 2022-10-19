@@ -63,19 +63,18 @@ export default {
             const token = window.localStorage.getItem('token') || '';
             const sid = window.sessionStorage.getItem('shareId') || '';
             const extinfo = {
-                token,
                 openType: this.params.openType,
+                token,
                 ...(this.params.did ? { did: this.params.did } : {}),
                 ...(sid ? { sid } : {}),
+                ...(this.params.item ? { item: this.params.item } : {}),
             };
             return extinfo; 
         }
     },
     methods: {
         // event: { appId: string, extInfo: string }
-        handlerSuccess(event) {
-            console.log('success', event);
-            this.$emit('handlerComfirm');
+        handlerSuccess() {
         },
         // event: { errMsg: string, appId: string, extInfo: string }
         // event.errMsg: "launch:fail"
@@ -83,8 +82,6 @@ export default {
         // event.errMsg: "launch:fail_check fail"
         // 校验 App 跳转权限失败，请确认是否正确绑定AppID
         handlerError(event) {
-            console.log('fail', event);
-            this.$emit('handlerComfirm');
             if (event.detail.errMsg === 'launch:fail') {
                 this.showOverlay();
                 // window.location.href = 'https://hmd-down.oss-cn-hangzhou.aliyuncs.com/hificloud/android/release.apk';
@@ -95,7 +92,6 @@ export default {
         handlerOpenIosApp() {
             if ((this.isAndroid && this.isWeixin && this.isSignatured)) return;
             this.handlerOpenAPP();
-            this.$emit('handlerComfirm');
         },
         handlerOpenAPP() {
             const params = qs.stringify(this.extinfo);
@@ -106,7 +102,7 @@ export default {
                     downloadUrl: 'https://hmd-down.oss-cn-hangzhou.aliyuncs.com/hificloud/android/release.apk',
                 },
                 ios: {
-                    openUrl: `https://wx.hificloud.net/open?${params}.dde.1wx`,
+                    openUrl: `https://wx.hificloud.net/open/webaction?${params}`,
                     downloadUrl: 'https://apps.apple.com/cn/app/hificloud/id1543197598',
                 },
             };

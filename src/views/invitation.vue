@@ -206,6 +206,7 @@ export default {
     created() {
         window.sessionStorage.removeItem('shareId');
         this.getInvitationInfo();
+        document.title = '好友邀请';
     },
 }
 </script>

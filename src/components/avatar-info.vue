@@ -6,7 +6,7 @@
       height=".33rem"
       fit="cover"
       :src="(userInfo.wechat || {}).head_img_url || userInfo.head_img_url || require('@/assets/image/profile_avatar.png')"/>
-    <span class="nickname">{{ (userInfo.wechat || {}).nickname || userInfo.nickname || '登录' }}</span>
+    <span class="nickname cut_font">{{ (userInfo.wechat || {}).nickname || userInfo.nickname || '登录' }}</span>
   </div>
 </template>
 
@@ -40,3 +40,19 @@ export default {
   },
 }
 </script>
+
+<style>
+.avatar-info {
+  color: #007AFF;
+  display: flex;
+  font-size: .15rem;
+}
+.avatar-info .van-image {
+  margin: auto 0;
+}
+.avatar-info .nickname {
+  margin: auto .12rem;
+  min-width: 0.9rem;
+  max-width: calc(100vw - .36rem - 1.44rem - .57rem);
+}
+</style>
