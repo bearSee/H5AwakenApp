@@ -24,8 +24,8 @@
           <div
             class="image-container"
             @click="handlerPreview(i)"
-            :style="`background-image: url(${image.thumbnailUrl})`">
-            <van-image v-if="!isGird" :src="image.thumbnailUrl" fit="cover" />
+            :style="`background-image: url(${isGird ? image.thumbnailUrl : image.url})`">
+            <van-image v-if="!isGird" :src="isGird ? image.thumbnailUrl : image.url" fit="cover" />
             <div v-if="image.type === 1">
               <span v-if="isGird" class="duration">{{ formatDuration(image.videoDuration) }}</span>
               <img v-else class="play-btn" src="@/assets/image/play_btn.png" alt="" srcset="">
@@ -52,13 +52,13 @@
         @change="previewChange"
         @close="currentImage = {}">
         <template v-slot:cover>
-          <van-button
+          <!-- <van-button
             v-if="!currentImage.isOrigin && currentImage.type !== 1"
             class="origin-btn"
             round
             @click="handlerViewOrigin">
             查看原图（{{ ((currentImage.size || 0) / 1024 / 1024).toFixed(2) }}M）
-          </van-button>
+          </van-button> -->
           <div class="operate-box">
             <open-app class="save-btn" :params="{ openType: 'SAVE_TO', item: currentImage.md5 }">
               <img src="@/assets/image/btn_save_large.png" alt="" srcset="">

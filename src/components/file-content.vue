@@ -48,7 +48,9 @@
                 fit="contain"
                 :src="require(`@/assets/image/gird_file.png`)" />
               <div class="describe-box">
-                <div class="file-name">{{ isGird ? file.girdShootName : file.shootName }}</div>
+                <div class="file-name">
+                  <span class="filename cut_font">{{ file.filename }}<span v-if="file.fileType !== 2">.</span></span><span v-if="file.formatname" class="formatname">{{ file.formatname }}</span>
+                </div>
                 <div class="update-time">{{ formatDate(new Date(file.modifyTime), 'YYYY-MM-DD hh:mm') }} <span v-if="!isGird">{{ resetSize(file.size) }}</span></div>
                 <div class="file-size" v-if="isGird">{{ resetSize(file.size) }}</div>
               </div>
@@ -65,7 +67,9 @@
                 fit="contain"
                 :src="require(`@/assets/image/${file.fileType === 2 ? 'gird_folder' : 'gird_file'}.png`)" />
               <div class="describe-box">
-                <div class="file-name">{{ isGird ? file.girdShootName : file.shootName }}</div>
+                <div class="file-name">
+                  <span class="filename cut_font">{{ file.filename }}<span v-if="file.fileType !== 2">.</span></span><span v-if="file.formatname" class="formatname">{{ file.formatname }}</span>
+                </div>
                 <div class="update-time">{{ formatDate(new Date(file.modifyTime), 'YYYY-MM-DD hh:mm') }}</div>
                 <van-icon v-if="!isGird && file.fileType === 2" name="arrow" />
               </div>
@@ -147,12 +151,12 @@ export default {
             };
         },
         lastPathName() {
-            const { girdShootName, shootName } = this.pathHistory[this.pathHistory.length - 2] || {};
-            return girdShootName || shootName || '文件分享';
+            const { shootName } = this.pathHistory[this.pathHistory.length - 2] || {};
+            return shootName || '文件分享';
         },
         currentPathName() {
-            const { girdShootName, shootName } = this.pathHistory[this.pathHistory.length - 1] || {};
-            return girdShootName || shootName;
+            const { shootName } = this.pathHistory[this.pathHistory.length - 1] || {};
+            return shootName;
         },
     },
     methods: {

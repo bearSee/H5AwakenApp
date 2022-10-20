@@ -90,9 +90,13 @@
   font-weight: 500;
   color: #000000;
   line-height: .17rem;
-  overflow: hidden;
-  white-space: nowrap;
-  text-overflow: ellipsis;
+  width: 100%;
+  display: flex;
+  justify-content: center;
+}
+
+.file-content .van-grid .van-grid-item .van-grid-item__content .describe-box .file-name .formatname {
+  word-break: keep-all;
 }
 
 .file-content .van-grid .van-grid-item .van-grid-item__content .describe-box .update-time, .file-content .van-grid .van-grid-item .van-grid-item__content .describe-box .file-size {
@@ -150,6 +154,11 @@
 
 .file-content .van-grid.is-list .van-grid-item .van-grid-item__content .describe-box {
   width: calc(100% - .49rem);
+}
+
+.file-content .van-grid.is-list .van-grid-item .van-grid-item__content .describe-box .file-name {
+  justify-content: flex-start;
+  padding-right: 0.2rem;
 }
 
 .file-content .van-grid.is-list .van-grid-item .van-grid-item__content .describe-box .size {

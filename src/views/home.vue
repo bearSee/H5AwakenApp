@@ -2,7 +2,7 @@
  * @Author: 熊望
  * @Date: 2022-06-02 23:36:44
  * @LastEditors: 熊望
- * @LastEditTime: 2022-09-22 22:45:48
+ * @LastEditTime: 2022-10-19 22:41:39
  * @FilePath: /nginx/Users/bear/projects/project-bear/H5AwakenApp/src/views/home.vue
  * @Description: 
 -->
@@ -16,13 +16,13 @@
           <div class="des-c">安全守护您的数据</div>
         </div>
       </div>
-      <open-app :params="{ openType: componentTag }">
+      <open-app :params="{ openType: shareTag }">
           <van-button round  type="primary" size="mini">打开APP</van-button>
       </open-app>
     </div>
     <div class="home-body" id="home-body">
       <component
-        :component-tag="componentTag"
+        :component-tag="shareTag"
         :is="({ ONLY_READ_DIR: 'fileContent', ONLY_READ_ALBUM: 'imageContent', EMPTY: 'emptyContent' })[componentTag]">
       </component>
       <van-swipe class="banner-swipe" :autoplay="3000" indicator-color="white">
@@ -30,13 +30,13 @@
           <img class="banner-image" :src="banner" alt="" srcset="">
         </van-swipe-item>
       </van-swipe>
-      <open-app class="save-app-box" :params="{ openType: 'SAVE_TO' }">
+      <!-- <open-app class="save-app-box" :params="{ openType: 'SAVE_TO' }">
         <van-button
           class="save-app-btn"
           :icon="require('@/assets/image/btn_save.png')">
           一键转存云存宝
         </van-button>
-      </open-app>
+      </open-app> -->
       
       <!-- <pre style="font-size: .1rem;">
         <code>
@@ -62,8 +62,10 @@ export default {
     setup() {
       const { state, dispatch } = useStore();
       return {
+          shareStatus: computed(() => state.shareStatus),
           homeConfig: computed(() => (state.assetConfig || {}).home || {}),
-          componentTag: computed(() => !state.shareInfo.tag || (!state.images.length && state.shareInfo.tag === 'ONLY_READ_ALBUM') ? 'EMPTY' : state.shareInfo.tag),
+          shareTag: computed(() => state.shareInfo.tag),
+          componentTag: computed(() => !state.shareInfo.tag || (state.shareInfo.tag === 'ONLY_READ_ALBUM' && !state.images.length) || (state.shareInfo.tag === 'ONLY_READ_DIR' && state.shareStatus !== 'empty') ? 'EMPTY' : state.shareInfo.tag),
           getShareInfo: () => {
               return dispatch('getShareInfo');
           },
