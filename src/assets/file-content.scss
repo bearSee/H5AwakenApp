@@ -80,9 +80,16 @@
                         font-weight: 500;
                         color: #000000;
                         line-height: .17rem;
-                        overflow: hidden;
-                        white-space: nowrap;
-                        text-overflow: ellipsis;
+                        width: 100%;
+                        display: flex;
+                        justify-content: center;
+                        .filename {
+
+                        }
+                        .formatname {
+                            // flex: 1 0 auto;
+                            word-break: keep-all;
+                        }
                     }
                     .update-time, .file-size {
                         color: #808080;
@@ -120,31 +127,35 @@
                     border-bottom: .01rem solid #e6e6e6;
                     flex-direction: row;
                     justify-content: start;
-                .open-app {
-                    width: 100%;
-                }
-                &:active {
-                    background: #f8f8f8;
-                }
-                .van-image, .image-container {
-                    width: .39rem;
-                    height: .39rem;
-                    margin-right: .1rem;
-                }
-                .describe-box {
-                    width: calc(100% - .49rem);
-                    .size {
-                        margin-left: .05rem;
+                    .open-app {
+                        width: 100%;
                     }
-                    .van-icon {
-                        position: absolute;
-                        right: 0;
-                        top: 50%;
-                        transform: translateY(-50%);
-                        font-size: .16rem;
-                        color: #A9AEBE;
+                    &:active {
+                        background: #f8f8f8;
                     }
-                }
+                    .van-image, .image-container {
+                        width: .39rem;
+                        height: .39rem;
+                        margin-right: .1rem;
+                    }
+                    .describe-box {
+                        width: calc(100% - .49rem);
+                        .file-name {
+                            justify-content: flex-start;
+                            padding-right: 0.2rem;
+                        }
+                        .size {
+                            margin-left: .05rem;
+                        }
+                        .van-icon {
+                            position: absolute;
+                            right: 0;
+                            top: 50%;
+                            transform: translateY(-50%);
+                            font-size: .16rem;
+                            color: #A9AEBE;
+                        }
+                    }
                 }
                 &:nth-last-child(1) {
                     .van-grid-item__content {

@@ -184,17 +184,34 @@ export default createStore({
                 })}`, { headers: { 'Api-Version': '1.16' } }).then((res) => {
                     const files = (res && res.data || {}).data || {};
                     files.content = files.content.map(file => {
-                        const filename = file.name.split('.');
-                        const girdShootName = `${file.name.slice(0, 5)}..${filename[filename.length - 1]}`;
-                        const shootName = `${file.name.slice(0, 20)}..${filename[filename.length - 1]}`;
+                        const filenameList = file.name.split('.');
+                        let filename = file.name;
+                        let formatname = '';
+                        if (filenameList.length > 1) {
+                            filename = filenameList.slice(0, filenameList.length - 1).join('.');
+                            formatname = filenameList[filenameList.length - 1];
+                        }
+                        let fileShootName = file.name;
+                        let folderShootName = filename;
+                        if (filename.length > 6) {
+                            fileShootName =  `${filename.slice(0, 6)}...${formatname}`;
+                            folderShootName = `${filename.slice(0, 3)}...${filename.slice(filename.length - 3, filename.length)}`;
+                            // 文件夹的名称长度>6 将名称后三位截取下来，当做后缀
+                            if (file.fileType === 2) {
+                                filename = filename.slice(0, filename.length - 3);
+                                formatname = filename.slice(filename.length - 3, filename.length);
+                            }
+                        }
                         return {
                             ...file,
-                            girdShootName: girdShootName.length > file.name.length ? file.name : girdShootName,
-                            shootName: shootName.length > file.name.length ? file.name : shootName,
+                            filename,
+                            formatname,
+                            shootName: file.fileType === 2 ? folderShootName : fileShootName,
                             // 缩略图
                             thumbnailUrl: file.mediaType === 2 ? `${window._businessRoot}${deviceId}/anonymous/v3/file/img?${qs.stringify({ path: file.path })}` : '',
                         };
-                    })
+                    });
+                    commit('setShareStatus', 'empty');
                     commit('setFiles', files);
                     /**
                         "content": [
@@ -216,6 +233,13 @@ export default createStore({
                         "pageSize": 15,
                         "totalItem": 1
                      */
+                }).catch((err) => {
+                    const shareStatus = ({
+                        1401: 'cancel',
+                        2001: 'cancel',
+                        470: 'offline',
+                    })[(err && err.data || {}).status] || 'invalid';
+                    commit('setShareStatus', shareStatus);
                 }).finally(() => {
                     commit('setLoading', false);
                     Toast.clear();
