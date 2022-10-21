@@ -178,8 +178,10 @@ export default {
             this.isGird = !this.isGird;
             if (this.isAndroid && this.isWeixin) {
                 this.isCreated = false;
+                this.$emit('change-grid')
                 this.$nextTick(() => {
                     this.isCreated = true;
+                    this.$emit('change-grid')
                 });
             }
         },

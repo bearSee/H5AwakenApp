@@ -137,9 +137,11 @@ export default {
       handlerChangeGrid() {
           this.isGird = !this.isGird;
           this.isCreated = false;
+          this.$emit('change-grid')
           this.$nextTick(() => {
               setTimeout(() => {
                   this.isCreated = true;
+                  this.$emit('change-grid')
               }, 450);
           });
       },

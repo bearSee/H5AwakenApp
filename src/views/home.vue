@@ -23,10 +23,12 @@
     <div class="home-body" id="home-body">
       <component
         class="body-container"
+        :class="swipeFixed && 'full-height'"
         :component-tag="shareTag"
-        :is="({ ONLY_READ_DIR: 'fileContent', ONLY_READ_ALBUM: 'imageContent', EMPTY: 'emptyContent' })[componentTag]">
+        :is="({ ONLY_READ_DIR: 'fileContent', ONLY_READ_ALBUM: 'imageContent', EMPTY: 'emptyContent' })[componentTag]"
+        @change-grid="resetSwipePosition">
       </component>
-      <van-swipe class="banner-swipe" :class="swipeFixed && 'is_fixed'" :autoplay="3000" indicator-color="white">
+      <van-swipe class="banner-swipe" :autoplay="3000" indicator-color="white">
         <van-swipe-item v-for="banner in (homeConfig.bannerList || [])" :key="banner">
           <img class="banner-image" :src="banner" alt="" srcset="">
         </van-swipe-item>
@@ -81,6 +83,7 @@ export default {
   },
   methods: {
       resetSwipePosition() {
+          this.swipeFixed = false;
           this.$nextTick(() => {
               const bodyHeight = this.$el.querySelector('.home-body').getBoundingClientRect().height;
               const contentHeight = this.$el.querySelector('.body-container').getBoundingClientRect().height;
