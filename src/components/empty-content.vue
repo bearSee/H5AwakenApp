@@ -5,7 +5,7 @@
       </div>
       <van-empty
         :class="[shareStatus, isLoading && 'transparent_empty']"
-        :image="require(`@/assets/image/${shareStatus === 'empty' ? 'empty' : '404'}.png`)"
+        :image="require(`@/assets/image/empty.png`)"
         :description="tips" ></van-empty>
   </div>
 </template>

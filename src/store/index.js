@@ -208,7 +208,7 @@ export default createStore({
                             formatname,
                             shootName: file.fileType === 2 ? folderShootName : fileShootName,
                             // 缩略图
-                            thumbnailUrl: file.mediaType === 2 ? `${window._businessRoot}${deviceId}/anonymous/v3/file/img?${qs.stringify({ path: file.path })}` : '',
+                            thumbnailUrl: file.mediaType === 2 ? `${window._businessRoot}${deviceId}/anonymous/hfc/file?${qs.stringify({ path: file.path })}` : '',
                         };
                     });
                     commit('setShareStatus', 'empty');
@@ -277,11 +277,11 @@ export default createStore({
                 const data = (((res && res.data || {}).data || {}).content || []).map(d => ({
                     ...d,
                     // imgType 1：小图，2：大图，0：原图
-                    url: `${window._businessRoot}${deviceId}/anonymous/image?${qs.stringify({ uid, md5: d.md5, imgType: 2 })}`,
+                    url: `${window._businessRoot}${deviceId}/anonymous/hfc/image?${qs.stringify({ uid, md5: d.md5, imgType: 2 })}`,
                     // 缩略图
-                    thumbnailUrl: `${window._businessRoot}${deviceId}/anonymous/image?${qs.stringify({ uid, md5: d.md5, imgType: 1 })}`,
+                    thumbnailUrl: `${window._businessRoot}${deviceId}/anonymous/hfc/image?${qs.stringify({ uid, md5: d.md5, imgType: 1 })}`,
                     // 原图
-                    originUrl: `${window._businessRoot}${deviceId}/anonymous/image?${qs.stringify({ uid, md5: d.md5, imgType: 0 })}`,
+                    originUrl: `${window._businessRoot}${deviceId}/anonymous/hfc/image?${qs.stringify({ uid, md5: d.md5, imgType: 0 })}`,
                 }));
                 commit('setImages', data);
                 if (!data.length) commit('setShareStatus', 'empty');

@@ -51,12 +51,18 @@
     overflow-y: auto;
     .banner-swipe {
       .van-swipe-item {
-        img {
+        .banner-image {
           width: 100%;
+          display: block;
         }
       }
       .van-swipe__indicators {
         bottom: .25rem;
+      }
+      &.is_fixed {
+        position: fixed;
+        bottom: 0;
+        left: 0;
       }
     }
     .save-app-box {

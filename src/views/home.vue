@@ -22,10 +22,11 @@
     </div>
     <div class="home-body" id="home-body">
       <component
+        class="body-container"
         :component-tag="shareTag"
         :is="({ ONLY_READ_DIR: 'fileContent', ONLY_READ_ALBUM: 'imageContent', EMPTY: 'emptyContent' })[componentTag]">
       </component>
-      <van-swipe class="banner-swipe" :autoplay="3000" indicator-color="white">
+      <van-swipe class="banner-swipe" :class="swipeFixed && 'is_fixed'" :autoplay="3000" indicator-color="white">
         <van-swipe-item v-for="banner in (homeConfig.bannerList || [])" :key="banner">
           <img class="banner-image" :src="banner" alt="" srcset="">
         </van-swipe-item>
@@ -49,7 +50,7 @@
 </template>
 
 <script>
-import { computed } from 'vue';
+import { ref, computed  } from 'vue';
 import { useStore } from 'vuex';
 import fileContent from '@/components/file-content';
 import imageContent from '@/components/image-content';
@@ -62,6 +63,8 @@ export default {
     setup() {
       const { state, dispatch } = useStore();
       return {
+          swipeFixed: ref(true),
+          isLoading: computed(() => state.isLoading),
           shareStatus: computed(() => state.shareStatus),
           homeConfig: computed(() => (state.assetConfig || {}).home || {}),
           shareTag: computed(() => state.shareInfo.tag),
@@ -70,6 +73,21 @@ export default {
               return dispatch('getShareInfo');
           },
       };
+  },
+  watch: {
+      isLoading() {
+          this.resetSwipePosition();
+      },
+  },
+  methods: {
+      resetSwipePosition() {
+          this.$nextTick(() => {
+              const bodyHeight = this.$el.querySelector('.home-body').getBoundingClientRect().height;
+              const contentHeight = this.$el.querySelector('.body-container').getBoundingClientRect().height;
+              const bannerHeight = this.$el.querySelector('.banner-swipe').getBoundingClientRect().height;
+              this.swipeFixed = contentHeight + bannerHeight < bodyHeight;
+          });
+      },
   },
   mounted() {
       this.getShareInfo();

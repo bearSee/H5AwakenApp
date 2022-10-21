@@ -3,7 +3,7 @@
       <div class="user-info">
         <avatar-info />
         <div class="operate-box">
-          <div class="operate" @click="isGird = !isGird">
+          <div class="operate" @click="handlerChangeGrid">
             <img class="oper-icon" :src="require(`@/assets/image/${isGird ? 'menu_view_pic' : 'menu_view_grid'}.png`)" alt="" srcset="">
             <span>{{ isGird ? '大图' : '宫格' }}</span>
           </div>
@@ -15,7 +15,7 @@
           <span>共 {{ classifyCount.image }} 张照片，{{ classifyCount.video }} 个视频</span>
         </div>
       </div>
-      <van-grid v-if="images.length" :square="isGird" :gutter="1" :border="false" :column-num="isGird ? 3 : 1">
+      <van-grid v-if="images.length" v-show="isCreated" :square="isGird" :gutter="1" :border="false" :column-num="isGird ? 3 : 1">
         <van-grid-item v-for="(image, i) in (homeConfig.maxFileLength > 0 ? images.slice(0, homeConfig.maxFileLength) : images)" :key="image.id">
           <!-- <video class="video" v-if="image.type === 1" controls :poster="image.thumbnailUrl">
             <source :src="image.originUrl" type="video/mp4">
@@ -95,6 +95,7 @@ export default {
     setup() {
       const { state } = useStore();
       return {
+          isCreated: ref(true),
           homeConfig: computed(() => (state.assetConfig || {}).home || {}),
           images: computed(() => state.images),
           // 是否为宫格展示
@@ -132,6 +133,15 @@ export default {
           const m = parseInt(duration % 3600 / 60);
           const s = duration % 60;
           return `${h && formatStr(h) || ''}${h && ':' || ''}${formatStr(m)}:${formatStr(s)}`;
+      },
+      handlerChangeGrid() {
+          this.isGird = !this.isGird;
+          this.isCreated = false;
+          this.$nextTick(() => {
+              setTimeout(() => {
+                  this.isCreated = true;
+              }, 450);
+          });
       },
   },
 }
