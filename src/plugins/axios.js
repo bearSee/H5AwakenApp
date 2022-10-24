@@ -26,7 +26,7 @@ Axios.interceptors.request.use(
         const token = window.localStorage.getItem('token') || '';
         config.headers = {
             ...config.headers,
-            Authorization:`Bearer ${token}`,
+            ...(token ? { Authorization: `Bearer ${token}` } : {}),
         };
         if (config.loading) {
             Toast.clear();

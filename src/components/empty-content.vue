@@ -28,6 +28,7 @@ export default {
           invalid: '网络异常，请稍后再试',
           cancel: '抱歉，分享已取消',
           empty: '相簿内无图片和视频',
+          overtime: '抱歉，分享已过期',
         })[state.shareStatus]),
       };
   },

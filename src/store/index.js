@@ -30,7 +30,7 @@ export default createStore({
         userInfo: {},
         // 分享概要信息
         shareInfo: {},
-        // empty/invalid/offline/cancel
+        // empty/invalid/offline/cancel/overtime
         shareStatus: 'invalid',
         files: {},
         albums: {},
@@ -150,6 +150,7 @@ export default createStore({
                 const shareStatus = ({
                     1401: 'cancel',
                     2001: 'cancel',
+                    2003: 'overtime',
                 })[(err && err.data || {}).status] || 'invalid';
                 commit('setShareStatus', shareStatus);
                 commit('setLoading', false);
@@ -276,10 +277,10 @@ export default createStore({
             axios.get(`${window._businessRoot}${deviceId}/anonymous/v3/album/media/list?id=${id}`, { headers: { 'Api-Version': '1.16' } }).then((res) => {
                 const data = (((res && res.data || {}).data || {}).content || []).map(d => ({
                     ...d,
-                    // imgType 1：小图，2：大图，0：原图
+                    // imgType 3：小图，2：大图，0：原图
                     url: `${window._businessRoot}${deviceId}/anonymous/hfc/image?${qs.stringify({ uid, md5: d.md5, imgType: 2 })}`,
                     // 缩略图
-                    thumbnailUrl: `${window._businessRoot}${deviceId}/anonymous/hfc/image?${qs.stringify({ uid, md5: d.md5, imgType: 1 })}`,
+                    thumbnailUrl: `${window._businessRoot}${deviceId}/anonymous/hfc/image?${qs.stringify({ uid, md5: d.md5, imgType: 3 })}`,
                     // 原图
                     originUrl: `${window._businessRoot}${deviceId}/anonymous/hfc/image?${qs.stringify({ uid, md5: d.md5, imgType: 0 })}`,
                 }));

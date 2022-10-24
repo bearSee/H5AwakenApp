@@ -66,7 +66,7 @@ export default {
             const token = window.localStorage.getItem('token') || '';
             const sid = window.sessionStorage.getItem('shareId') || '';
             const extinfo = {
-                openType: this.params.openType,
+                openType: this.params.openType || 'Open',
                 token,
                 ...(this.params.did ? { did: this.params.did } : {}),
                 ...(sid ? { sid } : {}),

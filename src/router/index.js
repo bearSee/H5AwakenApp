@@ -81,7 +81,7 @@ router.beforeEach(async (to, from, next) => {
         return;
     }
     
-    if (!['/home', '/login'].includes(to.path)) {
+    if (!routes.map(({ path }) => path).includes(to.path)) {
         next('/login');
         setTimeout(() => { commit('setURLStatic', '/login'); }, 500);
         return;
