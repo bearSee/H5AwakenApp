@@ -99,7 +99,7 @@ export default {
             isFocus: ref(false),
             queryParams: computed(() => state.queryParams),
             // 0：待接受 1: 接受成功 2: 接受重复 3:失效/已被人接受 4: 接受失败
-            invitationStatus: ref(0),
+            invitationStatus: ref(-1),
             invitationInfo: reactive({}),
             telephone: ref(''),
             auth: ref(''),
@@ -210,7 +210,7 @@ export default {
     },
     created() {
         window.sessionStorage.removeItem('shareId');
-        // this.getInvitationInfo();
+        this.getInvitationInfo();
         document.title = '好友邀请';
     },
 }

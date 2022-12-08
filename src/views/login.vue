@@ -20,7 +20,6 @@
       </div>
       <div class="title">{{ wxCode ? '请登录云存宝账号，绑定微信' : '欢迎登录' }}</div>
       <div class="des">新用户登录后将自动创建帐号</div>
-      {{isFocus}}
     </div>
       <van-form @submit="handlerSubmit">
         <van-cell-group inset>
