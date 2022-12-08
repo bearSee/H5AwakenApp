@@ -123,14 +123,14 @@ export default {
           classifyCount: computed(() => (state.files || {}).classifyCount || {}),
           isLoading: computed(() => state.isLoading),
           // visible: ref(false),
-          isFinished: computed(() => (state.files.content || []).length >= state.files.totalItem),
+          isFinished: computed(() => ((state.files || {}).content || []).length >= (state.files || {}).totalItem),
           // 是否为宫格展示
           isGird: ref(false),
           showPopover: ref(false),
           filters: [
-            { text: '名称', code: 'zd' },
-            { text: '时间', code: 'md' },
-            { text: '大小', code: 'sd' },
+            { text: '名称', code: 'zu' },
+            { text: '时间', code: 'mu' },
+            { text: '大小', code: 'su' },
           ],
           filterCode: ref('zd'),
           getFiles: params => dispatch('getFiles', params),
@@ -176,14 +176,25 @@ export default {
         },
         handlerChangeGrid() {
             this.isGird = !this.isGird;
-            if (this.isAndroid && this.isWeixin) {
-                this.isCreated = false;
-                this.$emit('change-grid')
-                this.$nextTick(() => {
+            if (!(this.files.content || []).length) return;
+            this.isCreated = false;
+            this.$emit('hide-swipe')
+            this.$nextTick(() => {
+                setTimeout(() => {
                     this.isCreated = true;
-                    this.$emit('change-grid')
-                });
-            }
+                    this.$emit('show-swipe')
+                }, 150);
+            });
+
+            // this.isGird = !this.isGird;
+            // if (this.isAndroid && this.isWeixin) {
+            //     this.isCreated = false;
+            //     this.$emit('hide-swipe')
+            //     this.$nextTick(() => {
+            //         this.isCreated = true;
+            //         this.$emit('show-swipe')
+            //     });
+            // }
         },
         handlerBack() {
             if (this.pathHistory.length < 2) return;

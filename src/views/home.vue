@@ -26,9 +26,10 @@
         :class="swipeFixed && 'full-height'"
         :component-tag="shareTag"
         :is="({ ONLY_READ_DIR: 'fileContent', ONLY_READ_ALBUM: 'imageContent', EMPTY: 'emptyContent' })[componentTag]"
-        @change-grid="resetSwipePosition">
+        @hide-swipe="showSwipe = false"
+        @show-swipe="resetSwipePosition">
       </component>
-      <van-swipe class="banner-swipe" :autoplay="3000" indicator-color="white">
+      <van-swipe class="banner-swipe" v-show="showSwipe" :autoplay="3000" indicator-color="white">
         <van-swipe-item v-for="banner in (homeConfig.bannerList || [])" :key="banner">
           <img class="banner-image" :src="banner" alt="" srcset="">
         </van-swipe-item>
@@ -66,11 +67,12 @@ export default {
       const { state, dispatch } = useStore();
       return {
           swipeFixed: ref(true),
+          showSwipe: ref(true),
           isLoading: computed(() => state.isLoading),
           shareStatus: computed(() => state.shareStatus),
           homeConfig: computed(() => (state.assetConfig || {}).home || {}),
           shareTag: computed(() => state.shareInfo.tag),
-          componentTag: computed(() => !state.shareInfo.tag || (state.shareInfo.tag === 'ONLY_READ_ALBUM' && !state.images.length) || (state.shareInfo.tag === 'ONLY_READ_DIR' && state.shareStatus !== 'empty') ? 'EMPTY' : state.shareInfo.tag),
+          componentTag: computed(() => !state.shareInfo.tag || (state.shareInfo.tag === 'ONLY_READ_ALBUM' && !((state.images || {}).content || []).length) || (state.shareInfo.tag === 'ONLY_READ_DIR' && state.shareStatus !== 'empty') ? 'EMPTY' : state.shareInfo.tag),
           getShareInfo: () => {
               return dispatch('getShareInfo');
           },
@@ -84,6 +86,7 @@ export default {
   methods: {
       resetSwipePosition() {
           this.swipeFixed = false;
+          this.showSwipe = true;
           this.$nextTick(() => {
               const bodyHeight = this.$el.querySelector('.home-body').getBoundingClientRect().height;
               const contentHeight = this.$el.querySelector('.body-container').getBoundingClientRect().height;

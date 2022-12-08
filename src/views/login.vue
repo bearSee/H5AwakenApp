@@ -20,6 +20,7 @@
       </div>
       <div class="title">{{ wxCode ? '请登录云存宝账号，绑定微信' : '欢迎登录' }}</div>
       <div class="des">新用户登录后将自动创建帐号</div>
+      {{isFocus}}
     </div>
       <van-form @submit="handlerSubmit">
         <van-cell-group inset>
@@ -30,6 +31,8 @@
             type="digit"
             maxlength="11"
             v-model="telephone"
+            @focus="isFocus = true"
+            @blur="isFocus = false"
           />
           <van-field
             class="is-border"
@@ -39,7 +42,9 @@
             placeholder="请输入验证码"
             type="digit"
             maxlength="6"
-            v-model="auth">
+            v-model="auth"
+            @focus="isFocus = true"
+            @blur="isFocus = false">
             <template #button>
               <van-button
                 class="verification-code-btn"
@@ -69,7 +74,7 @@
           </van-button>
         </div>
       </van-form>
-      <div class="wx-login-box" v-if="isWeixinEnv && !wxCode">
+      <div class="wx-login-box" v-if="isWeixinEnv && !wxCode" v-show="!isFocus">
         <div>微信登录</div>
         <img src="@/assets/image/wechat.png" @click="wxAuthorization" alt="" srcset="">
       </div>
@@ -96,6 +101,7 @@ export default {
       const router = useRouter();
       const ua = window.navigator.userAgent.toLowerCase();
       return {
+          isFocus: ref(false),
           isWeixinEnv: /MicroMessenger/i.test(ua),
           wxCode: computed(() => state.queryParams.code),
           agreed: ref(false),

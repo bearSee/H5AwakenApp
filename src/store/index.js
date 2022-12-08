@@ -71,13 +71,13 @@ export default createStore({
             state.shareInfo = payload || {};
         },
         setFiles(state, payload) {
-            state.files = payload || [];
+            state.files = payload || {};
         },
         setAlbums(state, payload) {
-            state.albums = payload || [];
+            state.albums = payload || {};
         },
         setImages(state, payload) {
-            state.images = payload || [];
+            state.images = payload || {};
         },
         setOverlayVisible(state, payload) {
             state.overlayVisible = payload || false;
@@ -164,7 +164,7 @@ export default createStore({
                 // 分页参数(pageNo, pageSize) 格式: 12,15
                 range = '0,15',
                 // 排序方式,顺序 排序方式: z:name, s:size, m:modifyTime; 顺序: u:正序, d:倒序
-                sort = 'zd',
+                sort = 'zu',
                 // 1:视频, 2:图片, 3:音频, 4:文档, 5:其他
                 mediaType = '',
             } = payload;
@@ -275,7 +275,8 @@ export default createStore({
             });
             commit('setLoading', true);
             axios.get(`${window._businessRoot}${deviceId}/anonymous/v3/album/media/list?id=${id}`, { headers: { 'Api-Version': '1.16' } }).then((res) => {
-                const data = (((res && res.data || {}).data || {}).content || []).map(d => ({
+                const data = (res && res.data || {}).data || {};
+                const content = (data.content || []).map(d => ({
                     ...d,
                     // imgType 3：小图，2：大图，0：原图
                     url: `${window._businessRoot}${deviceId}/anonymous/hfc/image?${qs.stringify({ uid, md5: d.md5, imgType: 2 })}`,
@@ -284,8 +285,8 @@ export default createStore({
                     // 原图
                     originUrl: `${window._businessRoot}${deviceId}/anonymous/hfc/image?${qs.stringify({ uid, md5: d.md5, imgType: 0 })}`,
                 }));
-                commit('setImages', data);
-                if (!data.length) commit('setShareStatus', 'empty');
+                commit('setImages', { ...data, content });
+                if (!content.length) commit('setShareStatus', 'empty');
             }).catch((err) => {
                 const shareStatus = ({
                     1401: 'cancel',

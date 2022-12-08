@@ -24,6 +24,8 @@
                 type="digit"
                 maxlength="11"
                 v-model="telephone"
+                @focus="isFocus = true"
+                @blur="isFocus = false"
             />
             <van-field
                 class="is-border"
@@ -33,7 +35,9 @@
                 placeholder="请输入验证码"
                 type="digit"
                 maxlength="6"
-                v-model="auth">
+                v-model="auth"
+                @focus="isFocus = true"
+                @blur="isFocus = false">
                 <template #button>
                 <van-button
                     class="verification-code-btn"
@@ -51,7 +55,7 @@
                 <van-button block native-type="submit">加入设备</van-button>
             </div>
         </van-form>
-        <div class="bot-tip" v-if="true">此链接{{ formatTime(invitationInfo.expiration) || '30分钟' }}后失效</div>
+        <div class="bot-tip" v-show="!isFocus">此链接{{ formatTime(invitationInfo.expiration) || '30分钟' }}后失效</div>
     </template>
     <template v-else-if="[1, 2].includes(invitationStatus)">
         <div class="invitation-tips">
@@ -92,9 +96,10 @@ export default {
     setup() {
         const { state, dispatch } = useStore();
         return {
+            isFocus: ref(false),
             queryParams: computed(() => state.queryParams),
             // 0：待接受 1: 接受成功 2: 接受重复 3:失效/已被人接受 4: 接受失败
-            invitationStatus: ref(-1),
+            invitationStatus: ref(0),
             invitationInfo: reactive({}),
             telephone: ref(''),
             auth: ref(''),
@@ -205,7 +210,7 @@ export default {
     },
     created() {
         window.sessionStorage.removeItem('shareId');
-        this.getInvitationInfo();
+        // this.getInvitationInfo();
         document.title = '好友邀请';
     },
 }

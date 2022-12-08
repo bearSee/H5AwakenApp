@@ -12,7 +12,7 @@
       <div class="photo-box">
         <div class="photo-t">照片合集</div>
         <div class="photo-c">
-          <span>共 {{ classifyCount.image }} 张照片，{{ classifyCount.video }} 个视频</span>
+          <span>共 {{ classifyCount.mediaType_2 }} 张照片，{{ classifyCount.mediaType_1 }} 个视频</span>
         </div>
       </div>
       <van-grid v-if="images.length" v-show="isCreated" :square="isGird" :gutter="1" :border="false" :column-num="isGird ? 3 : 1">
@@ -25,7 +25,7 @@
             class="image-container"
             @click="handlerPreview(i)"
             :style="`background-image: url(${isGird ? image.thumbnailUrl : image.url})`">
-            <van-image v-if="!isGird" :src="isGird ? image.thumbnailUrl : image.url" fit="cover" />
+            <van-image v-if="!isGird" :src="isGird ? image.thumbnailUrl : image.url" fit="cover" alt="1" @load="loadFinished" @error="loadFinished"/>
             <div v-if="image.type === 1">
               <span v-if="isGird" class="duration">{{ formatDuration(image.videoDuration) }}</span>
               <img v-else class="play-btn" src="@/assets/image/play_btn.png" alt="" srcset="">
@@ -35,7 +35,7 @@
               :class="isGird && 'is-gird'"
               :params="{ openType: componentTag, item: image.md5 }"
               v-if="homeConfig.maxFileLength > 0 && images.length > homeConfig.maxFileLength && i >= (homeConfig.maxFileLength - 1)">
-              <span>+ {{ images.length - homeConfig.maxFileLength + 1 }}</span>
+              <span>+ {{ ((Number(classifyCount.mediaType_2) + Number(classifyCount.mediaType_1)) || images.length) - homeConfig.maxFileLength + 1 }}</span>
             </open-app>
           </div>
         </van-grid-item>
@@ -82,6 +82,7 @@ import avatarInfo from './avatar-info';
 import openApp from '@/components/open-app';
 
 const formatStr = s => `0${s || 0}`.slice(-2);
+let timer;
 
 export default {
     name: 'ImageContent',
@@ -97,20 +98,14 @@ export default {
       return {
           isCreated: ref(true),
           homeConfig: computed(() => (state.assetConfig || {}).home || {}),
-          images: computed(() => state.images),
+          images: computed(() => (state.images || {}).content || []),
           // 是否为宫格展示
           isGird: ref(true),
           previewVisible: ref(false),
           previewStartPosition: ref(0),
-          previewImages: computed(() => state.images.map(({ url, originUrl, isOrigin }) => isOrigin ? originUrl : url)),
+          previewImages: computed(() => ((state.images || {}).content || []).map(({ url, originUrl, isOrigin }) => isOrigin ? originUrl : url)),
           currentImage: reactive({}),
-          classifyCount: computed(() => {
-            const videoCount = state.images.filter(({ type }) => type === 1).length;
-              return {
-                  video: videoCount,
-                  image: state.images.length - videoCount,
-              }
-          }),
+          classifyCount: computed(() => (state.images || {}).classifyCount || {}),
       };
   },
   methods: {
@@ -136,14 +131,22 @@ export default {
       },
       handlerChangeGrid() {
           this.isGird = !this.isGird;
+          if (!this.images.length) return;
           this.isCreated = false;
-          this.$emit('change-grid')
+          this.$emit('hide-swipe')
           this.$nextTick(() => {
+              // 图片未加载完成，会导致高度计算错误，样式有问题
               setTimeout(() => {
                   this.isCreated = true;
-                  this.$emit('change-grid')
+                  this.$emit('show-swipe')
               }, 450);
           });
+      },
+      loadFinished() {
+          clearTimeout(timer);
+          timer = setTimeout(() => {
+              this.$emit('show-swipe')
+          }, 500);
       },
   },
 }
